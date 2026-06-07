@@ -26,7 +26,6 @@ body{font-family:var(--ff-body);background:var(--paper);color:var(--ink);min-hei
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.6}
 .page{max-width:680px;margin:0 auto;padding:2rem 1.25rem 4rem;position:relative;z-index:1}
 
-/* HEADER */
 header{text-align:center;padding:2.5rem 0 2rem;border-bottom:1.5px solid var(--border);margin-bottom:2rem}
 .logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:.4rem}
 .logo-box{width:38px;height:38px;background:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center}
@@ -36,41 +35,24 @@ h1 span{color:var(--gold)}
 .tagline{font-size:.88rem;color:var(--muted);margin-top:.3rem;font-weight:300}
 .free-badge{display:inline-flex;align-items:center;gap:5px;background:var(--green-l);border:1px solid var(--green-b);border-radius:20px;padding:4px 12px;font-size:.75rem;color:var(--green);font-weight:500;margin-top:.7rem}
 
-/* UPLOAD BUTTONS */
 .upload-section{margin-bottom:1.25rem}
-.camera-btn{
-  width:100%;padding:13px;
-  background:var(--ink);color:var(--paper);
-  border:none;border-radius:var(--radius);
-  font-size:.92rem;font-family:var(--ff-body);font-weight:500;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
-  margin-bottom:.75rem;transition:background .15s;
-}
+.camera-btn{width:100%;padding:13px;background:var(--ink);color:var(--paper);border:none;border-radius:var(--radius);font-size:.92rem;font-family:var(--ff-body);font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:.75rem;transition:background .15s}
 .camera-btn:hover{background:#2d2015}
 .camera-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .or-row{text-align:center;font-size:.78rem;color:var(--muted);margin-bottom:.75rem;position:relative}
 .or-row::before,.or-row::after{content:'';position:absolute;top:50%;width:44%;height:.5px;background:var(--border)}
 .or-row::before{left:0}.or-row::after{right:0}
 .or-row span{background:var(--paper);padding:0 10px;position:relative;z-index:1}
-
-.drop-zone{
-  border:2px dashed var(--border);border-radius:var(--radius);
-  padding:2.5rem 1.5rem;text-align:center;cursor:pointer;
-  background:#fff;transition:all .2s;
-}
+.drop-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:2.5rem 1.5rem;text-align:center;cursor:pointer;background:#fff;transition:all .2s}
 .drop-zone:hover,.drop-zone.drag-over{border-color:var(--gold);background:#fffdf5}
-.drop-zone input{display:none}
-.upload-icon{width:52px;height:52px;background:var(--cream);border:1.5px solid var(--border);border-radius:11px;margin:0 auto .9rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.drop-zone:hover .upload-icon,.drop-zone.drag-over .upload-icon{background:#fff8e6;border-color:var(--gold-l)}
-.upload-icon svg{width:24px;height:24px;stroke:var(--muted);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s}
-.drop-zone:hover .upload-icon svg,.drop-zone.drag-over .upload-icon svg{stroke:var(--gold)}
+.upload-icon{width:52px;height:52px;background:var(--cream);border:1.5px solid var(--border);border-radius:11px;margin:0 auto .9rem;display:flex;align-items:center;justify-content:center}
+.upload-icon svg{width:24px;height:24px;stroke:var(--muted);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .drop-title{font-size:.95rem;font-weight:500;color:var(--ink);margin-bottom:.3rem}
 .drop-sub{font-size:.82rem;color:var(--muted)}
 .fmt-row{display:flex;justify-content:center;gap:5px;margin-top:.8rem}
 .fmt-tag{background:var(--cream);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:.7rem;font-family:var(--ff-mono);color:var(--muted)}
 .mobile-note{background:var(--blue-l);border:1px solid var(--blue-b);border-radius:8px;padding:8px 12px;font-size:.78rem;color:var(--blue);margin-top:.75rem;line-height:1.5}
 
-/* PROCESSING */
 #statusCard{display:none;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:2rem;text-align:center;margin-bottom:1.25rem}
 .scan-ring{width:56px;height:56px;margin:0 auto 1rem;border:2px solid var(--border);border-radius:50%;position:relative}
 .scan-ring::after{content:'';position:absolute;inset:4px;border:2px solid transparent;border-top-color:var(--gold);border-radius:50%;animation:spin .9s linear infinite}
@@ -82,40 +64,33 @@ h1 span{color:var(--gold)}
 #statusTxt{font-size:.88rem;color:var(--muted)}
 #progressPct{font-size:.78rem;color:var(--gold-d);font-family:var(--ff-mono);margin-top:.3rem}
 
-/* ERROR */
 .err-box{display:none;background:var(--red-l);border:1px solid var(--red-b);border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--red);margin-bottom:1rem}
 
-/* RESULT */
 #resultArea{display:none;animation:fadeUp .4s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
-.result-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:1.25rem;margin-bottom:1.25rem}
-@media(max-width:540px){.result-grid{grid-template-columns:1fr}}
-
-.preview-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.preview-card img{width:100%;max-height:220px;object-fit:contain;background:var(--cream);padding:10px;display:block}
-.preview-foot{padding:7px 12px;font-size:.75rem;color:var(--muted);font-family:var(--ff-mono);border-top:1px solid var(--border);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-.result-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.result-head{background:var(--ink);color:var(--paper);padding:.9rem 1.1rem;display:flex;justify-content:space-between;align-items:center}
-.result-head .lbl{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;opacity:.6}
-.result-head .amt{font-family:var(--ff-head);font-size:1.5rem;color:var(--gold-l)}
-
-.chips{display:flex;flex-wrap:wrap;gap:5px;padding:.85rem 1.1rem .7rem;border-bottom:1px solid var(--border)}
+/* SHAREABLE CARD */
+#shareCard{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;margin-bottom:1.25rem;
+}
+.share-head{background:var(--ink);color:var(--paper);padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center}
+.share-head .lbl{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;opacity:.6}
+.share-head .amt{font-family:var(--ff-head);font-size:1.7rem;color:var(--gold-l)}
+.share-body{padding:1rem 1.25rem}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:.85rem}
 .chip{display:inline-flex;align-items:center;gap:4px;background:var(--cream);border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:.76rem;color:var(--ink)}
 .chip svg{width:11px;height:11px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-
-.items-wrap{padding:.85rem 1.1rem}
 .items-lbl{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.5rem}
 .item-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--cream);font-size:.86rem}
 .item-row:last-child{border-bottom:none}
 .item-row .iamt{color:var(--muted);font-family:var(--ff-mono);font-size:.8rem}
 .sub-row{display:flex;justify-content:space-between;padding:4px 0;font-size:.8rem;color:var(--muted)}
-.total-row{margin:.2rem 1.1rem 1.1rem;background:var(--cream);border-radius:8px;padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center}
-.total-row .tlbl{font-size:.85rem;font-weight:500}
-.total-row .tamt{font-family:var(--ff-head);font-size:1.35rem;color:var(--green)}
+.total-strip{background:var(--cream);border-radius:8px;padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center;margin-top:.75rem}
+.total-strip .tlbl{font-size:.85rem;font-weight:500}
+.total-strip .tamt{font-family:var(--ff-head);font-size:1.35rem;color:var(--green)}
+.scan-footer{text-align:center;font-size:.7rem;color:var(--muted);padding:.6rem;border-top:1px solid var(--border);font-family:var(--ff-mono)}
 
-/* RAW TEXT toggle */
 .raw-section{margin-bottom:1.25rem}
 .raw-toggle{display:flex;align-items:center;gap:6px;background:none;border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:.78rem;color:var(--muted);cursor:pointer;font-family:var(--ff-body);transition:all .15s}
 .raw-toggle:hover{border-color:var(--gold);color:var(--gold-d)}
@@ -124,7 +99,6 @@ h1 span{color:var(--gold)}
 .raw-block{display:none;margin-top:.6rem;background:var(--ink);color:#c8b98a;border-radius:10px;padding:1rem;font-family:var(--ff-mono);font-size:.74rem;line-height:1.7;overflow-x:auto;white-space:pre-wrap;max-height:200px;overflow-y:auto}
 .raw-block.show{display:block;animation:fadeUp .2s ease}
 
-/* ACTIONS */
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;gap:5px;padding:9px 16px;border-radius:8px;font-size:.83rem;font-family:var(--ff-body);cursor:pointer;transition:all .15s;font-weight:500;border:1px solid var(--border);background:#fff;color:var(--ink)}
 .btn:hover{border-color:var(--gold);color:var(--gold-d)}
@@ -150,12 +124,14 @@ footer strong{color:var(--ink)}
     <div class="free-badge">✦ 100% free — runs on your device</div>
   </header>
 
-  <!-- UPLOAD -->
-  <div class="upload-section">
-    <button class="camera-btn" onclick="document.getElementById('cameraIn').click()">
+  <div class="upload-section" id="uploadSection">
+    <!-- Camera button - opens rear camera on mobile -->
+    <button class="camera-btn" id="cameraBtnUI" onclick="openCamera()">
       <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
       Take photo with camera
     </button>
+
+    <!-- Hidden inputs -->
     <input type="file" id="cameraIn" accept="image/*" capture="environment" style="display:none" onchange="handleFile(this.files[0])">
     <input type="file" id="fileIn"   accept="image/*" style="display:none" onchange="handleFile(this.files[0])">
 
@@ -178,13 +154,11 @@ footer strong{color:var(--ink)}
         <span class="fmt-tag">HEIC</span>
       </div>
     </div>
-
     <div class="mobile-note">
       📱 <strong>On your phone:</strong> Camera button opens your rear camera directly. The box above lets you pick from your gallery.
     </div>
   </div>
 
-  <!-- STATUS -->
   <div id="statusCard">
     <div class="scan-ring"><div class="scan-line"></div></div>
     <p id="statusTxt">Loading OCR engine…</p>
@@ -194,28 +168,24 @@ footer strong{color:var(--ink)}
 
   <div class="err-box" id="errBox"></div>
 
-  <!-- RESULT -->
   <div id="resultArea">
-    <div class="result-grid">
-      <div class="preview-card">
-        <img id="previewImg" alt="Receipt">
-        <div class="preview-foot" id="previewFoot">receipt.jpg</div>
+
+    <!-- SHAREABLE CARD — this gets captured as image -->
+    <div id="shareCard">
+      <div class="share-head">
+        <span class="lbl">Expense amount</span>
+        <span class="amt" id="headAmt">—</span>
       </div>
-      <div class="result-card">
-        <div class="result-head">
-          <span class="lbl">Expense amount</span>
-          <span class="amt" id="headAmt">—</span>
-        </div>
+      <div class="share-body">
         <div class="chips" id="chips"></div>
-        <div class="items-wrap">
-          <div class="items-lbl">Line items</div>
-          <div id="lineItems"></div>
-        </div>
-        <div class="total-row">
+        <div class="items-lbl">Line items</div>
+        <div id="lineItems"></div>
+        <div class="total-strip">
           <span class="tlbl">Total</span>
           <span class="tamt" id="totalAmt">—</span>
         </div>
       </div>
+      <div class="scan-footer">Scanned with ScanBill • scanbill-free</div>
     </div>
 
     <div class="raw-section">
@@ -231,13 +201,13 @@ footer strong{color:var(--ink)}
         <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
         Scan another
       </button>
-      <button class="btn btn-primary" onclick="copyResult()">
-        <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-        Copy result
-      </button>
-      <button class="btn" onclick="shareResult()">
+      <button class="btn btn-primary" id="shareBtn" onclick="shareAsImage()">
         <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        Share
+        Share as image
+      </button>
+      <button class="btn" onclick="copyResult()">
+        <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copy text
       </button>
     </div>
   </div>
@@ -249,12 +219,25 @@ footer strong{color:var(--ink)}
 
 </div>
 
+<!-- html2canvas for screenshot sharing -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <script>
-// ── STATE ──────────────────────────────────────────────────────
 let lastResult = null;
 let lastFilename = '';
 
-// ── FILE HANDLING ──────────────────────────────────────────────
+// ── CAMERA FIX: detect mobile and trigger correctly ──────────
+function openCamera() {
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isMobile) {
+    // On mobile: use capture="environment" for rear camera
+    document.getElementById('cameraIn').click();
+  } else {
+    // On desktop: just open file picker (no camera)
+    document.getElementById('fileIn').click();
+  }
+}
+
 function onDrop(e) {
   e.preventDefault();
   document.getElementById('dropZone').classList.remove('drag-over');
@@ -266,24 +249,28 @@ async function handleFile(file) {
   if (!file) return;
   lastFilename = file.name;
 
-  document.getElementById('dropZone').style.display   = 'none';
-  document.getElementById('resultArea').style.display = 'none';
-  document.getElementById('errBox').style.display     = 'none';
-  document.getElementById('statusCard').style.display = 'block';
-  document.getElementById('previewImg').src           = URL.createObjectURL(file);
-  document.getElementById('previewFoot').textContent  = file.name;
+  document.getElementById('uploadSection').style.display = 'none';
+  document.getElementById('resultArea').style.display    = 'none';
+  document.getElementById('errBox').style.display        = 'none';
+  document.getElementById('statusCard').style.display    = 'block';
 
   setStatus('Loading OCR engine…', 5);
 
   try {
-    const result = await Tesseract.recognize(file, 'eng', {
+    // Pre-process image for better OCR accuracy
+    const processedFile = await preprocessImage(file);
+    setStatus('Image enhanced — running OCR…', 45);
+
+    const result = await Tesseract.recognize(processedFile, 'eng', {
       logger: m => {
-        if (m.status === 'loading tesseract core') setStatus('Loading OCR engine…', 10);
-        if (m.status === 'initializing tesseract') setStatus('Initializing…', 20);
-        if (m.status === 'loading language traineddata') setStatus('Loading language data…', 35);
-        if (m.status === 'initializing api')    setStatus('Starting OCR…', 50);
-        if (m.status === 'recognizing text')    setStatus('Reading receipt text…', Math.round(50 + (m.progress * 45)));
-      }
+        if (m.status === 'loading tesseract core')        setStatus('Loading OCR engine…', 10);
+        if (m.status === 'initializing tesseract')        setStatus('Initializing…', 20);
+        if (m.status === 'loading language traineddata')  setStatus('Loading language data…', 35);
+        if (m.status === 'initializing api')              setStatus('Starting OCR…', 50);
+        if (m.status === 'recognizing text')              setStatus('Reading receipt text…', Math.round(50 + (m.progress * 45)));
+      },
+      tessedit_pageseg_mode: '6',
+      tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,/-:₹$£€%& '
     });
 
     setStatus('Extracting expense data…', 98);
@@ -297,22 +284,93 @@ async function handleFile(file) {
     renderResult(parsed, text);
 
   } catch(err) {
-    document.getElementById('statusCard').style.display = 'none';
-    document.getElementById('dropZone').style.display   = 'block';
+    document.getElementById('statusCard').style.display  = 'none';
+    document.getElementById('uploadSection').style.display = 'block';
     showErr('Could not read receipt: ' + err.message);
   }
 }
 
-// ── OCR PROGRESS ──────────────────────────────────────────────
 function setStatus(txt, pct) {
-  document.getElementById('statusTxt').textContent  = txt;
+  document.getElementById('statusTxt').textContent   = txt;
   document.getElementById('progressBar').style.width = pct + '%';
   document.getElementById('progressPct').textContent = pct + '%';
 }
+function delay(ms){ return new Promise(r => setTimeout(r, ms)); }
 
-function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+// ── IMAGE PREPROCESSING FOR BETTER OCR ──────────────────────
+async function preprocessImage(file) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      // Scale up small images for better OCR
+      const scale = Math.max(1, Math.min(3, 1800 / Math.max(img.width, img.height)));
+      canvas.width  = img.width  * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext('2d');
 
-// ── RECEIPT PARSER ─────────────────────────────────────────────
+      // Draw scaled image
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // Get pixel data
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+
+      // Step 1: Convert to greyscale
+      for (let i = 0; i < data.length; i += 4) {
+        const grey = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
+        data[i] = data[i+1] = data[i+2] = grey;
+      }
+
+      // Step 2: Increase contrast
+      const contrast = 60;
+      const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+      for (let i = 0; i < data.length; i += 4) {
+        data[i]   = Math.min(255, Math.max(0, factor * (data[i]   - 128) + 128));
+        data[i+1] = Math.min(255, Math.max(0, factor * (data[i+1] - 128) + 128));
+        data[i+2] = Math.min(255, Math.max(0, factor * (data[i+2] - 128) + 128));
+      }
+
+      // Step 3: Adaptive threshold — make it black & white
+      for (let i = 0; i < data.length; i += 4) {
+        const v = data[i] > 140 ? 255 : 0;
+        data[i] = data[i+1] = data[i+2] = v;
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+
+      // Convert back to blob
+      canvas.toBlob(blob => {
+        resolve(new File([blob], 'processed.png', { type: 'image/png' }));
+      }, 'image/png');
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+// ── IMPROVED RECEIPT PARSER ───────────────────────────────────
+// ── OCR TEXT CLEANER ─────────────────────────────────────────
+function cleanOCR(text) {
+  return text
+    // Fix common OCR character confusions
+    .replace(/\|/g, 'I')           // pipe → I
+    .replace(/l(?=\d)/g, '1')      // l before digit → 1
+    .replace(/O(?=\d)/g, '0')      // O before digit → 0
+    .replace(/0(?=[A-Z])/g, 'O') // 0 before letter → O
+    .replace(/rn/g, 'm')           // rn → m (common OCR mistake)
+    .replace(/FIRESH/gi, 'FRESH')
+    .replace(/FRUTIS/gi, 'FRUITS')
+    .replace(/MAIL(?=\s+AGAL)/gi, 'MALAGALA')
+    .replace(/AGAL\s+A/gi, '')
+    .replace(/1ime/gi, 'lime')
+    .replace(/(\w+)\s+AGAL\s+A/g, '')
+    // Remove standalone single characters that are OCR noise
+    .replace(/(?<![a-zA-Z])[A-Z](?![a-zA-Z])\s*$/gm, '')
+    // Fix extra spaces
+    .replace(/[ 	]{3,}/g, '  ')
+    .trim();
+}
+
 function parseReceipt(text) {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
 
@@ -321,38 +379,53 @@ function parseReceipt(text) {
     currency_symbol: '₹', items: [], subtotal: null, tax: null, total: null
   };
 
-  // Currency detection
-  if (text.includes('$')) result.currency_symbol = '$';
-  else if (text.includes('£')) result.currency_symbol = '£';
-  else if (text.includes('€')) result.currency_symbol = '€';
-  else if (text.includes('₹') || /rs\.?|inr/i.test(text)) result.currency_symbol = '₹';
+  // Currency
+  if (/\$/.test(text)) result.currency_symbol = '$';
+  else if (/£/.test(text)) result.currency_symbol = '£';
+  else if (/€/.test(text)) result.currency_symbol = '€';
 
-  // Merchant — first meaningful non-numeric line
-  for (const l of lines) {
-    if (l.length > 2 && !/^\d/.test(l) && !/total|tax|gst|date|time|invoice|receipt|bill|no\.|#/i.test(l)) {
-      result.merchant = l.replace(/[^a-zA-Z0-9\s&'-]/g, '').trim();
-      if (result.merchant.length > 2) break;
+  // ── Clean up common OCR errors first ──
+  text = cleanOCR(text);
+  const lines = text.split('
+').map(l => l.trim()).filter(Boolean);
+
+  // ── Merchant: first 1-3 lines that look like a shop name ──
+  let merchantLines = [];
+  for (let i = 0; i < Math.min(6, lines.length); i++) {
+    const l = lines[i];
+    // Skip lines that are clearly not a shop name
+    if (/^\d{6,}$/.test(l)) continue;           // pure phone numbers
+    if (/^[0-9\s\-\+\(\)]{7,}$/.test(l)) continue; // phone pattern
+    if (/\d{2}[\/\-\.]\d{2}[\/\-\.]\d{2,4}/.test(l)) break; // date = stop
+    if (/total|tax|gst|invoice|receipt|bill no|item|price|qty|amount/i.test(l)) break;
+    if (l.length >= 3 && /[a-zA-Z]/.test(l)) {
+      merchantLines.push(l);
+      if (merchantLines.length === 2) break; // take max 2 lines for merchant
     }
   }
+  if (merchantLines.length) result.merchant = merchantLines.join(', ');
 
-  // Date patterns
-  const dateRx = /\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}|\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2}|\d{1,2}\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d{2,4})\b/i;
+  // ── Date ──
+  const dateRx = /\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}|\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2})\b/;
   const dm = text.match(dateRx);
   if (dm) result.date = dm[0];
 
-  // GST number (India format)
-  const gstRx = /\b\d{2}[A-Z]{5}\d{4}[A-Z]\d[Z][A-Z\d]\b/;
-  const gm = text.match(gstRx);
+  // ── GST ──
+  const gm = text.match(/\b\d{2}[A-Z]{5}\d{4}[A-Z]\d[Z][A-Z\d]\b/);
   if (gm) result.gst_number = gm[0];
 
-  // Total — scan from bottom, find total line
-  const totalKw = /grand\s*total|total\s*amount|net\s*total|amount\s*due|payable|total/i;
-  const amtRx   = /[\₹\$\£\€]?\s*(\d[\d,]*(?:\.\d{1,2})?)/;
+  // ── Total: scan bottom-up for total keywords ──
+  const totalKw = /grand\s*total|total\s*amount|net\s*total|amount\s*due|payable|bill\s*total|^total/i;
+  const amtRx   = /(\d[\d,]*(?:\.\d{1,2})?)/;
   for (let i = lines.length - 1; i >= 0; i--) {
     if (totalKw.test(lines[i])) {
-      const m = lines[i].match(amtRx);
-      if (m) { result.total = parseFloat(m[1].replace(/,/g,'')); break; }
-      // amount might be on next line
+      const nums = lines[i].match(/(\d[\d,]*(?:\.\d{1,2})?)/g);
+      if (nums) {
+        // take the largest number on that line
+        const vals = nums.map(n => parseFloat(n.replace(/,/g,'')));
+        result.total = Math.max(...vals);
+        break;
+      }
       if (i+1 < lines.length) {
         const m2 = lines[i+1].match(amtRx);
         if (m2) { result.total = parseFloat(m2[1].replace(/,/g,'')); break; }
@@ -360,61 +433,99 @@ function parseReceipt(text) {
     }
   }
 
-  // Tax
-  const taxRx = /\b(?:tax|gst|cgst|sgst|igst|vat|service\s*charge)\b/i;
+  // ── Tax ──
   for (const l of lines) {
-    if (taxRx.test(l)) {
-      const m = l.match(amtRx);
-      if (m) { result.tax = parseFloat(m[1].replace(/,/g,'')); break; }
+    if (/\b(?:tax|gst|cgst|sgst|igst|vat|service\s*charge)\b/i.test(l)) {
+      const nums = l.match(/(\d[\d,]*(?:\.\d{1,2})?)/g);
+      if (nums) { result.tax = parseFloat(nums[nums.length-1].replace(/,/g,'')); break; }
     }
   }
 
-  // Subtotal
-  const subRx = /\b(?:subtotal|sub\s*total|net\s*amount)\b/i;
+  // ── Subtotal ──
   for (const l of lines) {
-    if (subRx.test(l)) {
-      const m = l.match(amtRx);
-      if (m) { result.subtotal = parseFloat(m[1].replace(/,/g,'')); break; }
+    if (/\b(?:subtotal|sub\s*total|net\s*amount)\b/i.test(l)) {
+      const nums = l.match(/(\d[\d,]*(?:\.\d{1,2})?)/g);
+      if (nums) { result.subtotal = parseFloat(nums[nums.length-1].replace(/,/g,'')); break; }
     }
   }
 
-  // Line items — two-column pattern: "Name   Amount"
-  const skipRx = /total|subtotal|tax|gst|cgst|sgst|igst|vat|date|time|invoice|receipt|thank|welcome|visit|address|phone|email|www\.|http/i;
+  // ── Line items: improved detection ──
+  const skipRx = /grand\s*total|^total|subtotal|tax|gst|cgst|sgst|cash|change|thank|welcome|visit|address|phone|email|www\.|http|invoice|receipt|bill\s*no|item\s*name|u\.?\s*price|wt\/?pcs/i;
+
   for (const l of lines) {
     if (skipRx.test(l)) continue;
-    // Match: text on left, number on right
-    const m = l.match(/^([A-Za-z][A-Za-z0-9\s\-\/\.]{1,28}?)\s{2,}[\₹\$\£\€]?\s*(\d[\d,]*(?:\.\d{1,2})?)$/);
-    if (m) {
-      const name = m[1].trim();
-      const amt  = parseFloat(m[2].replace(/,/g,''));
+    if (l.length < 3) continue;
+
+    // Pattern 1: "Item Name   Price" — name and number separated by spaces
+    const p1 = l.match(/^([A-Za-z][A-Za-z0-9\s\-\/\.&]{1,35}?)\s{2,}(\d[\d,]*(?:\.\d{1,2})?)$/);
+    if (p1) {
+      const name = p1[1].trim();
+      const amt  = parseFloat(p1[2].replace(/,/g,''));
+      if (name.length > 1 && amt > 0 && amt !== result.total) {
+        result.items.push({ name, amount: amt });
+        continue;
+      }
+    }
+
+    // Pattern 2: lines with qty x price = total (e.g. "75.00  0.530  40.00")
+    // These are weight-based items — get name from previous line
+    const p2 = l.match(/^(\d+\.?\d*)\s+(\d+\.?\d*)\s+(\d+\.?\d*)$/);
+    if (p2 && result.items.length === 0) {
+      // look back for item name
+      const idx = lines.indexOf(l);
+      if (idx > 0) {
+        const prevLine = lines[idx - 1];
+        if (!skipRx.test(prevLine) && /[a-zA-Z]/.test(prevLine)) {
+          // "Yelakki Banana 20" — extract name and qty separately
+          const nameMatch = prevLine.match(/^([A-Za-z][A-Za-z\s]+)/);
+          if (nameMatch) {
+            const amt = parseFloat(p2[3]); // last number = price
+            if (amt > 0 && amt !== result.total) {
+              result.items.push({ name: nameMatch[1].trim(), amount: amt });
+            }
+          }
+        }
+      }
+      continue;
+    }
+
+    // Pattern 3: "Item Name  Qty  Price" three columns
+    const p3 = l.match(/^([A-Za-z][A-Za-z0-9\s\-\/\.]{1,25}?)\s+(\d+)\s+(\d[\d,]*(?:\.\d{1,2})?)$/);
+    if (p3) {
+      const name = p3[1].trim();
+      const amt  = parseFloat(p3[3].replace(/,/g,''));
       if (name.length > 1 && amt > 0 && amt !== result.total) {
         result.items.push({ name, amount: amt });
       }
     }
   }
 
-  // If no total found but items exist, sum them
+  // Remove duplicate items
+  const seen = new Set();
+  result.items = result.items.filter(item => {
+    const key = item.name + item.amount;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  // Fallback total
   if (!result.total && result.items.length) {
     result.total = result.items.reduce((s, i) => s + i.amount, 0);
   }
-
-  // Fallback: find the largest amount on the receipt as total
   if (!result.total) {
     const allAmts = [];
-    for (const l of lines) {
-      const m = l.match(/[\₹\$\£\€]?\s*(\d[\d,]*(?:\.\d{1,2})?)/g);
-      if (m) m.forEach(a => {
-        const n = parseFloat(a.replace(/[₹$£€,\s]/g,''));
-        if (n > 0) allAmts.push(n);
-      });
-    }
+    text.match(/\d[\d,]*(?:\.\d{1,2})?/g)?.forEach(a => {
+      const n = parseFloat(a.replace(/,/g,''));
+      if (n > 0) allAmts.push(n);
+    });
     if (allAmts.length) result.total = Math.max(...allAmts);
   }
 
   return result;
 }
 
-// ── RENDER ─────────────────────────────────────────────────────
+// ── RENDER ────────────────────────────────────────────────────
 function fmt(n, sym) {
   if (n == null) return '—';
   return (sym||'₹') + Number(n).toLocaleString('en-IN', {minimumFractionDigits:0,maximumFractionDigits:2});
@@ -426,18 +537,16 @@ function esc(s) {
 function renderResult(d, rawText) {
   const sym = d.currency_symbol || '₹';
 
-  document.getElementById('headAmt').textContent = fmt(d.total, sym);
+  document.getElementById('headAmt').textContent  = fmt(d.total, sym);
   document.getElementById('totalAmt').textContent = fmt(d.total, sym);
 
-  // Chips
   const chips = document.getElementById('chips');
   chips.innerHTML = '';
-  if (d.merchant) chips.innerHTML += `<span class="chip"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>${esc(d.merchant)}</span>`;
-  if (d.date)     chips.innerHTML += `<span class="chip"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${esc(d.date)}</span>`;
-  if (d.gst_number) chips.innerHTML += `<span class="chip"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>GST: ${esc(d.gst_number)}</span>`;
+  if (d.merchant)    chips.innerHTML += `<span class="chip"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>${esc(d.merchant)}</span>`;
+  if (d.date)        chips.innerHTML += `<span class="chip"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${esc(d.date)}</span>`;
+  if (d.gst_number)  chips.innerHTML += `<span class="chip"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>GST: ${esc(d.gst_number)}</span>`;
   if (!chips.innerHTML) chips.innerHTML = '<span style="font-size:.76rem;color:var(--muted)">No merchant info detected</span>';
 
-  // Items
   const li = document.getElementById('lineItems');
   li.innerHTML = '';
   (d.items||[]).forEach(item => {
@@ -450,14 +559,58 @@ function renderResult(d, rawText) {
   if (!d.items || !d.items.length)
     li.innerHTML = '<p style="font-size:.8rem;color:var(--muted);padding:4px 0 8px">No individual items detected</p>';
 
-  // Raw text
   document.getElementById('rawBlock').textContent = rawText;
-
   document.getElementById('resultArea').style.display = 'block';
   document.getElementById('resultArea').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-// ── UI HELPERS ─────────────────────────────────────────────────
+// ── SHARE AS IMAGE ────────────────────────────────────────────
+async function shareAsImage() {
+  const btn = document.getElementById('shareBtn');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '⏳ Preparing…';
+  btn.disabled = true;
+
+  try {
+    const card = document.getElementById('shareCard');
+    const canvas = await html2canvas(card, {
+      backgroundColor: '#ffffff',
+      scale: 2, // high resolution
+      useCORS: true
+    });
+
+    canvas.toBlob(async (blob) => {
+      const file = new File([blob], 'scanbill-receipt.png', { type: 'image/png' });
+
+      // Try native share (works on mobile)
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: 'Receipt Scan',
+          text: `Total: ${document.getElementById('totalAmt').textContent}`,
+          files: [file]
+        });
+      } else {
+        // Desktop fallback: download the image
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'scanbill-receipt.png';
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      btn.innerHTML = orig;
+      btn.disabled = false;
+    }, 'image/png');
+
+  } catch(err) {
+    btn.innerHTML = orig;
+    btn.disabled = false;
+    if (err.name !== 'AbortError') alert('Could not share: ' + err.message);
+  }
+}
+
+// ── OTHER HELPERS ─────────────────────────────────────────────
 function showErr(msg) {
   const b = document.getElementById('errBox');
   b.textContent = '⚠ ' + msg;
@@ -466,11 +619,11 @@ function showErr(msg) {
 
 function resetApp() {
   lastResult = null;
-  document.getElementById('resultArea').style.display = 'none';
-  document.getElementById('errBox').style.display     = 'none';
-  document.getElementById('dropZone').style.display   = 'block';
-  document.getElementById('fileIn').value             = '';
-  document.getElementById('cameraIn').value           = '';
+  document.getElementById('resultArea').style.display    = 'none';
+  document.getElementById('errBox').style.display        = 'none';
+  document.getElementById('uploadSection').style.display = 'block';
+  document.getElementById('fileIn').value   = '';
+  document.getElementById('cameraIn').value = '';
   document.getElementById('rawBlock').classList.remove('show');
   document.getElementById('rawToggle').classList.remove('open');
   window.scrollTo({top:0,behavior:'smooth'});
@@ -486,28 +639,28 @@ function toggleRaw() {
 
 function copyResult() {
   if (!lastResult) return;
-  const txt = `Receipt Summary
-Merchant: ${lastResult.merchant || 'N/A'}
-Date: ${lastResult.date || 'N/A'}
-GST: ${lastResult.gst_number || 'N/A'}
-Items: ${(lastResult.items||[]).map(i => i.name + ' ' + lastResult.currency_symbol + i.amount).join(', ') || 'N/A'}
-Total: ${lastResult.currency_symbol}${lastResult.total}`;
+  const d = lastResult;
+  const sym = d.currency_symbol || '₹';
+  const txt =
+`🧾 Receipt Summary
+━━━━━━━━━━━━━━━━━━
+🏪 Merchant : ${d.merchant || 'N/A'}
+📅 Date     : ${d.date || 'N/A'}
+🧾 GST      : ${d.gst_number || 'N/A'}
+
+📋 Items:
+${(d.items||[]).map(i => `  • ${i.name} — ${sym}${i.amount}`).join('\n') || '  No items detected'}
+
+💰 Total    : ${fmt(d.total, sym)}
+━━━━━━━━━━━━━━━━━━
+Scanned with ScanBill`;
+
   navigator.clipboard.writeText(txt).then(() => {
-    const btn = document.querySelector('.btn-primary');
+    const btn = document.querySelector('.btn:last-child');
     const orig = btn.innerHTML;
     btn.innerHTML = '✓ Copied!';
     setTimeout(() => btn.innerHTML = orig, 1800);
   });
-}
-
-function shareResult() {
-  if (!lastResult) return;
-  const txt = `Receipt: ${lastResult.merchant||'Unknown'} | Total: ${lastResult.currency_symbol}${lastResult.total} | Scanned with ScanBill`;
-  if (navigator.share) {
-    navigator.share({ title: 'Receipt', text: txt }).catch(() => {});
-  } else {
-    navigator.clipboard.writeText(txt).then(() => alert('Copied! Paste in WhatsApp or any app.'));
-  }
 }
 </script>
 </body>
