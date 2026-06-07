@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ScanBill — Free Receipt Scanner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
+<style>
+:root{
+  --ink:#1a1208;--paper:#faf7f0;--cream:#f2ece0;
+  --gold:#c8902a;--gold-l:#e8c068;--gold-d:#8a5e10;
+  --green:#2d6a4f;--green-l:#d8f0e8;--green-b:#9fd5be;
+  --red:#c0392b;--red-l:#fdf2f0;--red-b:#e8b4ae;
+  --blue-l:#eef5fd;--blue-b:#b8d4f0;--blue:#2c5f8a;
+  --muted:#7a6f5e;--border:#d8ceb8;
+  --ff-head:'DM Serif Display',Georgia,serif;
+  --ff-body:'DM Sans',sans-serif;
+  --ff-mono:'DM Mono',monospace;
+  --radius:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--ff-body);background:var(--paper);color:var(--ink);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.6}
+.page{max-width:680px;margin:0 auto;padding:2rem 1.25rem 4rem;position:relative;z-index:1}
+
+/* HEADER */
+header{text-align:center;padding:2.5rem 0 2rem;border-bottom:1.5px solid var(--border);margin-bottom:2rem}
+.logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:.4rem}
+.logo-box{width:38px;height:38px;background:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-box svg{width:20px;height:20px;stroke:#faf7f0;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+h1{font-family:var(--ff-head);font-size:1.9rem;color:var(--ink);letter-spacing:-.02em}
+h1 span{color:var(--gold)}
+.tagline{font-size:.88rem;color:var(--muted);margin-top:.3rem;font-weight:300}
+.free-badge{display:inline-flex;align-items:center;gap:5px;background:var(--green-l);border:1px solid var(--green-b);border-radius:20px;padding:4px 12px;font-size:.75rem;color:var(--green);font-weight:500;margin-top:.7rem}
+
+/* UPLOAD BUTTONS */
+.upload-section{margin-bottom:1.25rem}
+.camera-btn{
+  width:100%;padding:13px;
+  background:var(--ink);color:var(--paper);
+  border:none;border-radius:var(--radius);
+  font-size:.92rem;font-family:var(--ff-body);font-weight:500;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-bottom:.75rem;transition:background .15s;
+}
+.camera-btn:hover{background:#2d2015}
+.camera-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.or-row{text-align:center;font-size:.78rem;color:var(--muted);margin-bottom:.75rem;position:relative}
+.or-row::before,.or-row::after{content:'';position:absolute;top:50%;width:44%;height:.5px;background:var(--border)}
+.or-row::before{left:0}.or-row::after{right:0}
+.or-row span{background:var(--paper);padding:0 10px;position:relative;z-index:1}
+
+.drop-zone{
+  border:2px dashed var(--border);border-radius:var(--radius);
+  padding:2.5rem 1.5rem;text-align:center;cursor:pointer;
+  background:#fff;transition:all .2s;
+}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--gold);background:#fffdf5}
+.drop-zone input{display:none}
+.upload-icon{width:52px;height:52px;background:var(--cream);border:1.5px solid var(--border);border-radius:11px;margin:0 auto .9rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.drop-zone:hover .upload-icon,.drop-zone.drag-over .upload-icon{background:#fff8e6;border-color:var(--gold-l)}
+.upload-icon svg{width:24px;height:24px;stroke:var(--muted);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s}
+.drop-zone:hover .upload-icon svg,.drop-zone.drag-over .upload-icon svg{stroke:var(--gold)}
+.drop-title{font-size:.95rem;font-weight:500;color:var(--ink);margin-bottom:.3rem}
+.drop-sub{font-size:.82rem;color:var(--muted)}
+.fmt-row{display:flex;justify-content:center;gap:5px;margin-top:.8rem}
+.fmt-tag{background:var(--cream);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:.7rem;font-family:var(--ff-mono);color:var(--muted)}
+.mobile-note{background:var(--blue-l);border:1px solid var(--blue-b);border-radius:8px;padding:8px 12px;font-size:.78rem;color:var(--blue);margin-top:.75rem;line-height:1.5}
+
+/* PROCESSING */
+#statusCard{display:none;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:2rem;text-align:center;margin-bottom:1.25rem}
+.scan-ring{width:56px;height:56px;margin:0 auto 1rem;border:2px solid var(--border);border-radius:50%;position:relative}
+.scan-ring::after{content:'';position:absolute;inset:4px;border:2px solid transparent;border-top-color:var(--gold);border-radius:50%;animation:spin .9s linear infinite}
+.scan-line{position:absolute;left:6px;right:6px;top:50%;height:1.5px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:scanline 1.8s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes scanline{0%,100%{transform:translateY(-12px);opacity:0}50%{transform:translateY(0);opacity:1}}
+.progress-bar-wrap{background:var(--cream);border-radius:20px;height:6px;margin:.75rem 0 .5rem;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--gold-d),var(--gold));border-radius:20px;width:0%;transition:width .3s ease}
+#statusTxt{font-size:.88rem;color:var(--muted)}
+#progressPct{font-size:.78rem;color:var(--gold-d);font-family:var(--ff-mono);margin-top:.3rem}
+
+/* ERROR */
+.err-box{display:none;background:var(--red-l);border:1px solid var(--red-b);border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--red);margin-bottom:1rem}
+
+/* RESULT */
+#resultArea{display:none;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.result-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:1.25rem;margin-bottom:1.25rem}
+@media(max-width:540px){.result-grid{grid-template-columns:1fr}}
+
+.preview-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.preview-card img{width:100%;max-height:220px;object-fit:contain;background:var(--cream);padding:10px;display:block}
+.preview-foot{padding:7px 12px;font-size:.75rem;color:var(--muted);font-family:var(--ff-mono);border-top:1px solid var(--border);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.result-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.result-head{background:var(--ink);color:var(--paper);padding:.9rem 1.1rem;display:flex;justify-content:space-between;align-items:center}
+.result-head .lbl{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;opacity:.6}
+.result-head .amt{font-family:var(--ff-head);font-size:1.5rem;color:var(--gold-l)}
+
+.chips{display:flex;flex-wrap:wrap;gap:5px;padding:.85rem 1.1rem .7rem;border-bottom:1px solid var(--border)}
+.chip{display:inline-flex;align-items:center;gap:4px;background:var(--cream);border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:.76rem;color:var(--ink)}
+.chip svg{width:11px;height:11px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+.items-wrap{padding:.85rem 1.1rem}
+.items-lbl{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.5rem}
+.item-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--cream);font-size:.86rem}
+.item-row:last-child{border-bottom:none}
+.item-row .iamt{color:var(--muted);font-family:var(--ff-mono);font-size:.8rem}
+.sub-row{display:flex;justify-content:space-between;padding:4px 0;font-size:.8rem;color:var(--muted)}
+.total-row{margin:.2rem 1.1rem 1.1rem;background:var(--cream);border-radius:8px;padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center}
+.total-row .tlbl{font-size:.85rem;font-weight:500}
+.total-row .tamt{font-family:var(--ff-head);font-size:1.35rem;color:var(--green)}
+
+/* RAW TEXT toggle */
+.raw-section{margin-bottom:1.25rem}
+.raw-toggle{display:flex;align-items:center;gap:6px;background:none;border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:.78rem;color:var(--muted);cursor:pointer;font-family:var(--ff-body);transition:all .15s}
+.raw-toggle:hover{border-color:var(--gold);color:var(--gold-d)}
+.raw-toggle svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+.raw-toggle.open svg{transform:rotate(90deg)}
+.raw-block{display:none;margin-top:.6rem;background:var(--ink);color:#c8b98a;border-radius:10px;padding:1rem;font-family:var(--ff-mono);font-size:.74rem;line-height:1.7;overflow-x:auto;white-space:pre-wrap;max-height:200px;overflow-y:auto}
+.raw-block.show{display:block;animation:fadeUp .2s ease}
+
+/* ACTIONS */
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:9px 16px;border-radius:8px;font-size:.83rem;font-family:var(--ff-body);cursor:pointer;transition:all .15s;font-weight:500;border:1px solid var(--border);background:#fff;color:var(--ink)}
+.btn:hover{border-color:var(--gold);color:var(--gold-d)}
+.btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn-primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn-primary:hover{background:#2d2015;border-color:#2d2015}
+
+footer{text-align:center;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);font-size:.76rem;color:var(--muted);line-height:1.8}
+footer strong{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="logo-row">
+      <div class="logo-box">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </div>
+      <h1>Scan<span>Bill</span></h1>
+    </div>
+    <p class="tagline">Free receipt scanner — no API key, no server, no cost</p>
+    <div class="free-badge">✦ 100% free — runs on your device</div>
+  </header>
+
+  <!-- UPLOAD -->
+  <div class="upload-section">
+    <button class="camera-btn" onclick="document.getElementById('cameraIn').click()">
+      <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      Take photo with camera
+    </button>
+    <input type="file" id="cameraIn" accept="image/*" capture="environment" style="display:none" onchange="handleFile(this.files[0])">
+    <input type="file" id="fileIn"   accept="image/*" style="display:none" onchange="handleFile(this.files[0])">
+
+    <div class="or-row"><span>or upload from gallery</span></div>
+
+    <div class="drop-zone" id="dropZone"
+         onclick="document.getElementById('fileIn').click()"
+         ondragover="event.preventDefault();this.classList.add('drag-over')"
+         ondragleave="this.classList.remove('drag-over')"
+         ondrop="onDrop(event)">
+      <div class="upload-icon">
+        <svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+      </div>
+      <p class="drop-title">Drop your receipt image here</p>
+      <p class="drop-sub">or click to browse from your gallery</p>
+      <div class="fmt-row">
+        <span class="fmt-tag">JPG</span>
+        <span class="fmt-tag">PNG</span>
+        <span class="fmt-tag">WEBP</span>
+        <span class="fmt-tag">HEIC</span>
+      </div>
+    </div>
+
+    <div class="mobile-note">
+      📱 <strong>On your phone:</strong> Camera button opens your rear camera directly. The box above lets you pick from your gallery.
+    </div>
+  </div>
+
+  <!-- STATUS -->
+  <div id="statusCard">
+    <div class="scan-ring"><div class="scan-line"></div></div>
+    <p id="statusTxt">Loading OCR engine…</p>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+    <p id="progressPct">0%</p>
+  </div>
+
+  <div class="err-box" id="errBox"></div>
+
+  <!-- RESULT -->
+  <div id="resultArea">
+    <div class="result-grid">
+      <div class="preview-card">
+        <img id="previewImg" alt="Receipt">
+        <div class="preview-foot" id="previewFoot">receipt.jpg</div>
+      </div>
+      <div class="result-card">
+        <div class="result-head">
+          <span class="lbl">Expense amount</span>
+          <span class="amt" id="headAmt">—</span>
+        </div>
+        <div class="chips" id="chips"></div>
+        <div class="items-wrap">
+          <div class="items-lbl">Line items</div>
+          <div id="lineItems"></div>
+        </div>
+        <div class="total-row">
+          <span class="tlbl">Total</span>
+          <span class="tamt" id="totalAmt">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="raw-section">
+      <button class="raw-toggle" id="rawToggle" onclick="toggleRaw()">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        View raw OCR text
+      </button>
+      <div class="raw-block" id="rawBlock"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" onclick="resetApp()">
+        <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+        Scan another
+      </button>
+      <button class="btn btn-primary" onclick="copyResult()">
+        <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copy result
+      </button>
+      <button class="btn" onclick="shareResult()">
+        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Share
+      </button>
+    </div>
+  </div>
+
+  <footer>
+    <strong>ScanBill</strong> — Free Receipt Scanner<br>
+    OCR runs entirely on your device · No data sent anywhere · Always free
+  </footer>
+
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────
+let lastResult = null;
+let lastFilename = '';
+
+// ── FILE HANDLING ──────────────────────────────────────────────
+function onDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropZone').classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) handleFile(f);
+}
+
+async function handleFile(file) {
+  if (!file) return;
+  lastFilename = file.name;
+
+  document.getElementById('dropZone').style.display   = 'none';
+  document.getElementById('resultArea').style.display = 'none';
+  document.getElementById('errBox').style.display     = 'none';
+  document.getElementById('statusCard').style.display = 'block';
+  document.getElementById('previewImg').src           = URL.createObjectURL(file);
+  document.getElementById('previewFoot').textContent  = file.name;
+
+  setStatus('Loading OCR engine…', 5);
+
+  try {
+    const result = await Tesseract.recognize(file, 'eng', {
+      logger: m => {
+        if (m.status === 'loading tesseract core') setStatus('Loading OCR engine…', 10);
+        if (m.status === 'initializing tesseract') setStatus('Initializing…', 20);
+        if (m.status === 'loading language traineddata') setStatus('Loading language data…', 35);
+        if (m.status === 'initializing api')    setStatus('Starting OCR…', 50);
+        if (m.status === 'recognizing text')    setStatus('Reading receipt text…', Math.round(50 + (m.progress * 45)));
+      }
+    });
+
+    setStatus('Extracting expense data…', 98);
+    await delay(300);
+
+    const text = result.data.text;
+    const parsed = parseReceipt(text);
+    lastResult = { ...parsed, raw_text: text };
+
+    document.getElementById('statusCard').style.display = 'none';
+    renderResult(parsed, text);
+
+  } catch(err) {
+    document.getElementById('statusCard').style.display = 'none';
+    document.getElementById('dropZone').style.display   = 'block';
+    showErr('Could not read receipt: ' + err.message);
+  }
+}
+
+// ── OCR PROGRESS ──────────────────────────────────────────────
+function setStatus(txt, pct) {
+  document.getElementById('statusTxt').textContent  = txt;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── RECEIPT PARSER ─────────────────────────────────────────────
+function parseReceipt(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+
+  const result = {
+    merchant: null, date: null, gst_number: null,
+    currency_symbol: '₹', items: [], subtotal: null, tax: null, total: null
+  };
+
+  // Currency detection
+  if (text.includes('$')) result.currency_symbol = '$';
+  else if (text.includes('£')) result.currency_symbol = '£';
+  else if (text.includes('€')) result.currency_symbol = '€';
+  else if (text.includes('₹') || /rs\.?|inr/i.test(text)) result.currency_symbol = '₹';
+
+  // Merchant — first meaningful non-numeric line
+  for (const l of lines) {
+    if (l.length > 2 && !/^\d/.test(l) && !/total|tax|gst|date|time|invoice|receipt|bill|no\.|#/i.test(l)) {
+      result.merchant = l.replace(/[^a-zA-Z0-9\s&'-]/g, '').trim();
+      if (result.merchant.length > 2) break;
+    }
+  }
+
+  // Date patterns
+  const dateRx = /\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}|\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2}|\d{1,2}\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d{2,4})\b/i;
+  const dm = text.match(dateRx);
+  if (dm) result.date = dm[0];
+
+  // GST number (India format)
+  const gstRx = /\b\d{2}[A-Z]{5}\d{4}[A-Z]\d[Z][A-Z\d]\b/;
+  const gm = text.match(gstRx);
+  if (gm) result.gst_number = gm[0];
+
+  // Total — scan from bottom, find total line
+  const totalKw = /grand\s*total|total\s*amount|net\s*total|amount\s*due|payable|total/i;
+  const amtRx   = /[\₹\$\£\€]?\s*(\d[\d,]*(?:\.\d{1,2})?)/;
+  for (let i = lines.length - 1; i >= 0; i--) {
+    if (totalKw.test(lines[i])) {
+      const m = lines[i].match(amtRx);
+      if (m) { result.total = parseFloat(m[1].replace(/,/g,'')); break; }
+      // amount might be on next line
+      if (i+1 < lines.length) {
+        const m2 = lines[i+1].match(amtRx);
+        if (m2) { result.total = parseFloat(m2[1].replace(/,/g,'')); break; }
+      }
+    }
+  }
+
+  // Tax
+  const taxRx = /\b(?:tax|gst|cgst|sgst|igst|vat|service\s*charge)\b/i;
+  for (const l of lines) {
+    if (taxRx.test(l)) {
+      const m = l.match(amtRx);
+      if (m) { result.tax = parseFloat(m[1].replace(/,/g,'')); break; }
+    }
+  }
+
+  // Subtotal
+  const subRx = /\b(?:subtotal|sub\s*total|net\s*amount)\b/i;
+  for (const l of lines) {
+    if (subRx.test(l)) {
+      const m = l.match(amtRx);
+      if (m) { result.subtotal = parseFloat(m[1].replace(/,/g,'')); break; }
+    }
+  }
+
+  // Line items — two-column pattern: "Name   Amount"
+  const skipRx = /total|subtotal|tax|gst|cgst|sgst|igst|vat|date|time|invoice|receipt|thank|welcome|visit|address|phone|email|www\.|http/i;
+  for (const l of lines) {
+    if (skipRx.test(l)) continue;
+    // Match: text on left, number on right
+    const m = l.match(/^([A-Za-z][A-Za-z0-9\s\-\/\.]{1,28}?)\s{2,}[\₹\$\£\€]?\s*(\d[\d,]*(?:\.\d{1,2})?)$/);
+    if (m) {
+      const name = m[1].trim();
+      const amt  = parseFloat(m[2].replace(/,/g,''));
+      if (name.length > 1 && amt > 0 && amt !== result.total) {
+        result.items.push({ name, amount: amt });
+      }
+    }
+  }
+
+  // If no total found but items exist, sum them
+  if (!result.total && result.items.length) {
+    result.total = result.items.reduce((s, i) => s + i.amount, 0);
+  }
+
+  // Fallback: find the largest amount on the receipt as total
+  if (!result.total) {
+    const allAmts = [];
+    for (const l of lines) {
+      const m = l.match(/[\₹\$\£\€]?\s*(\d[\d,]*(?:\.\d{1,2})?)/g);
+      if (m) m.forEach(a => {
+        const n = parseFloat(a.replace(/[₹$£€,\s]/g,''));
+        if (n > 0) allAmts.push(n);
+      });
+    }
+    if (allAmts.length) result.total = Math.max(...allAmts);
+  }
+
+  return result;
+}
+
+// ── RENDER ─────────────────────────────────────────────────────
+function fmt(n, sym) {
+  if (n == null) return '—';
+  return (sym||'₹') + Number(n).toLocaleString('en-IN', {minimumFractionDigits:0,maximumFractionDigits:2});
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderResult(d, rawText) {
+  const sym = d.currency_symbol || '₹';
+
+  document.getElementById('headAmt').textContent = fmt(d.total, sym);
+  document.getElementById('totalAmt').textContent = fmt(d.total, sym);
+
+  // Chips
+  const chips = document.getElementById('chips');
+  chips.innerHTML = '';
+  if (d.merchant) chips.innerHTML += `<span class="chip"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>${esc(d.merchant)}</span>`;
+  if (d.date)     chips.innerHTML += `<span class="chip"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${esc(d.date)}</span>`;
+  if (d.gst_number) chips.innerHTML += `<span class="chip"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>GST: ${esc(d.gst_number)}</span>`;
+  if (!chips.innerHTML) chips.innerHTML = '<span style="font-size:.76rem;color:var(--muted)">No merchant info detected</span>';
+
+  // Items
+  const li = document.getElementById('lineItems');
+  li.innerHTML = '';
+  (d.items||[]).forEach(item => {
+    li.innerHTML += `<div class="item-row"><span>${esc(item.name)}</span><span class="iamt">${fmt(item.amount,sym)}</span></div>`;
+  });
+  if (d.subtotal != null && d.subtotal !== d.total)
+    li.innerHTML += `<div class="sub-row"><span>Subtotal</span><span>${fmt(d.subtotal,sym)}</span></div>`;
+  if (d.tax != null)
+    li.innerHTML += `<div class="sub-row"><span>Tax / GST</span><span>${fmt(d.tax,sym)}</span></div>`;
+  if (!d.items || !d.items.length)
+    li.innerHTML = '<p style="font-size:.8rem;color:var(--muted);padding:4px 0 8px">No individual items detected</p>';
+
+  // Raw text
+  document.getElementById('rawBlock').textContent = rawText;
+
+  document.getElementById('resultArea').style.display = 'block';
+  document.getElementById('resultArea').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── UI HELPERS ─────────────────────────────────────────────────
+function showErr(msg) {
+  const b = document.getElementById('errBox');
+  b.textContent = '⚠ ' + msg;
+  b.style.display = 'block';
+}
+
+function resetApp() {
+  lastResult = null;
+  document.getElementById('resultArea').style.display = 'none';
+  document.getElementById('errBox').style.display     = 'none';
+  document.getElementById('dropZone').style.display   = 'block';
+  document.getElementById('fileIn').value             = '';
+  document.getElementById('cameraIn').value           = '';
+  document.getElementById('rawBlock').classList.remove('show');
+  document.getElementById('rawToggle').classList.remove('open');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleRaw() {
+  const b = document.getElementById('rawBlock');
+  const t = document.getElementById('rawToggle');
+  const v = b.classList.contains('show');
+  b.classList.toggle('show', !v);
+  t.classList.toggle('open', !v);
+}
+
+function copyResult() {
+  if (!lastResult) return;
+  const txt = `Receipt Summary
+Merchant: ${lastResult.merchant || 'N/A'}
+Date: ${lastResult.date || 'N/A'}
+GST: ${lastResult.gst_number || 'N/A'}
+Items: ${(lastResult.items||[]).map(i => i.name + ' ' + lastResult.currency_symbol + i.amount).join(', ') || 'N/A'}
+Total: ${lastResult.currency_symbol}${lastResult.total}`;
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = document.querySelector('.btn-primary');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✓ Copied!';
+    setTimeout(() => btn.innerHTML = orig, 1800);
+  });
+}
+
+function shareResult() {
+  if (!lastResult) return;
+  const txt = `Receipt: ${lastResult.merchant||'Unknown'} | Total: ${lastResult.currency_symbol}${lastResult.total} | Scanned with ScanBill`;
+  if (navigator.share) {
+    navigator.share({ title: 'Receipt', text: txt }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(txt).then(() => alert('Copied! Paste in WhatsApp or any app.'));
+  }
+}
+</script>
+</body>
+</html>
