@@ -115,29 +115,25 @@ footer{text-align:center;margin-top:2.5rem;font-size:.72rem;color:var(--muted);l
 <div class="wrap">
 
   <div id="uploadSection">
-    <!-- Camera: visible file input styled as button — works on ALL phones -->
     <div style="position:relative;width:100%;margin-bottom:.65rem;">
       <div class="camera-btn">
         <svg viewBox="0 0 24 24" style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        Take photo with camera
+        Take photo / Upload receipt
       </div>
-      <input type="file" accept="image/*" capture="environment"
+      <input type="file" accept="image/*"
         onchange="go(this.files[0])"
-        style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:10;">
+        style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:10;font-size:16px;">
     </div>
-    <input type="file" id="fileIn" accept="image/*" style="display:none" onchange="go(this.files[0])">
-    <div class="or-row"><span>or upload from gallery</span></div>
-    <div class="drop-zone" id="dz"
-      onclick="document.getElementById('fileIn').click()"
-      ondragover="event.preventDefault();this.classList.add('dg')"
-      ondragleave="this.classList.remove('dg')"
-      ondrop="onDrop(event)">
+    <div class="or-row"><span>or choose from gallery</span></div>
+    <div class="drop-zone" id="dz" style="position:relative;">
       <div class="upload-icon"><svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg></div>
-      <p class="drop-title">Drop your receipt image here</p>
-      <p class="drop-sub">or click to browse from your gallery</p>
-      <div class="fmt-row"><span class="fmt-tag">JPG</span><span class="fmt-tag">PNG</span><span class="fmt-tag">WEBP</span><span class="fmt-tag">HEIC</span></div>
+      <p class="drop-title">Upload from gallery</p>
+      <p class="drop-sub">tap here to browse your photos</p>
+      <div class="fmt-row"><span class="fmt-tag">JPG</span><span class="fmt-tag">PNG</span><span class="fmt-tag">WEBP</span></div>
+      <input type="file" accept="image/*" onchange="go(this.files[0])"
+        style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:10;font-size:16px;">
     </div>
-    <div class="mob-note">📱 <strong>On phone:</strong> Camera button opens rear camera directly.</div>
+    <div class="mob-note">📱 Tap the black button to take a photo, or tap the box above to pick from gallery.</div>
   </div>
 
   <div id="statusCard">
@@ -379,7 +375,6 @@ function copyTxt(){
 function resetApp(){
   lastTotal=null; lastRaw='';
   show('resultArea',false); show('errBox',false); show('uploadSection',true);
-  document.getElementById('fileIn').value=''; document.getElementById('camIn').value='';
   document.getElementById('rawbox').classList.remove('show');
   document.getElementById('rt').classList.remove('open');
   window.scrollTo({top:0,behavior:'smooth'});
