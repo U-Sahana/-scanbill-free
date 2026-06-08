@@ -3,134 +3,116 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>ScanBill — Free Receipt Scanner</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono&display=swap" rel="stylesheet">
+<title>ScanBill — Receipt Total Scanner</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#1a1208;--paper:#faf7f0;--cream:#f2ece0;
   --gold:#c8902a;--gold-l:#e8c068;--gold-d:#8a5e10;
   --green:#2d6a4f;--green-l:#d8f0e8;--green-b:#9fd5be;
+  --muted:#7a6f5e;--border:#d8ceb8;
   --red:#c0392b;--red-l:#fdf2f0;--red-b:#e8b4ae;
   --blue-l:#eef5fd;--blue-b:#b8d4f0;--blue:#2c5f8a;
-  --muted:#7a6f5e;--border:#d8ceb8;
   --ff-head:'DM Serif Display',Georgia,serif;
   --ff-body:'DM Sans',sans-serif;
-  --ff-mono:'DM Mono',monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--ff-body);background:var(--paper);color:var(--ink);min-height:100vh}
-.page{max-width:560px;margin:0 auto;padding:2rem 1.25rem 4rem}
+body{font-family:var(--ff-body);background:var(--paper);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:2rem 1rem 4rem}
 
-header{text-align:center;padding:2rem 0 1.75rem;border-bottom:1.5px solid var(--border);margin-bottom:2rem}
-.logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:.4rem}
+.logo-row{display:flex;align-items:center;gap:10px;margin-bottom:.3rem}
 .logo-box{width:36px;height:36px;background:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center}
 .logo-box svg{width:19px;height:19px;stroke:#faf7f0;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 h1{font-family:var(--ff-head);font-size:1.8rem;color:var(--ink)}
 h1 span{color:var(--gold)}
-.tagline{font-size:.85rem;color:var(--muted);margin-top:.25rem}
-.free-badge{display:inline-flex;align-items:center;gap:5px;background:var(--green-l);border:1px solid var(--green-b);border-radius:20px;padding:3px 12px;font-size:.73rem;color:var(--green);font-weight:500;margin-top:.6rem}
+.tagline{font-size:.84rem;color:var(--muted);margin-bottom:1.75rem;text-align:center}
 
-.camera-btn{width:100%;padding:13px;background:var(--ink);color:var(--paper);border:none;border-radius:10px;font-size:.92rem;font-family:var(--ff-body);font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:.7rem;transition:background .15s}
+.wrap{width:100%;max-width:420px}
+
+/* UPLOAD */
+.camera-btn{width:100%;padding:13px;background:var(--ink);color:#faf7f0;border:none;border-radius:10px;font-size:.92rem;font-family:var(--ff-body);font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:.65rem;transition:background .15s}
 .camera-btn:hover{background:#2d2015}
-.camera-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.or-row{text-align:center;font-size:.76rem;color:var(--muted);margin-bottom:.7rem;position:relative}
+.camera-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.or-row{text-align:center;font-size:.75rem;color:var(--muted);margin-bottom:.65rem;position:relative}
 .or-row::before,.or-row::after{content:'';position:absolute;top:50%;width:44%;height:.5px;background:var(--border)}
 .or-row::before{left:0}.or-row::after{right:0}
 .or-row span{background:var(--paper);padding:0 10px;position:relative;z-index:1}
-.drop-zone{border:2px dashed var(--border);border-radius:10px;padding:2.5rem 1.5rem;text-align:center;cursor:pointer;background:#fff;transition:all .2s;margin-bottom:.75rem}
+.drop-zone{border:2px dashed var(--border);border-radius:10px;padding:2.25rem 1.5rem;text-align:center;cursor:pointer;background:#fff;transition:all .2s}
 .drop-zone:hover,.drop-zone.dg{border-color:var(--gold);background:#fffdf5}
-.upload-icon{width:50px;height:50px;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;margin:0 auto .85rem;display:flex;align-items:center;justify-content:center}
+.upload-icon{width:48px;height:48px;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;margin:0 auto .8rem;display:flex;align-items:center;justify-content:center}
 .upload-icon svg{width:22px;height:22px;stroke:var(--muted);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.drop-title{font-size:.92rem;font-weight:500;margin-bottom:.25rem}
-.drop-sub{font-size:.8rem;color:var(--muted)}
-.fmt-row{display:flex;justify-content:center;gap:5px;margin-top:.75rem}
-.fmt-tag{background:var(--cream);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:.68rem;font-family:var(--ff-mono);color:var(--muted)}
-.mob-note{background:var(--blue-l);border:1px solid var(--blue-b);border-radius:8px;padding:8px 12px;font-size:.76rem;color:var(--blue);line-height:1.5}
+.drop-title{font-size:.9rem;font-weight:500;margin-bottom:.25rem}
+.drop-sub{font-size:.78rem;color:var(--muted)}
+.fmt-row{display:flex;justify-content:center;gap:5px;margin-top:.7rem}
+.fmt-tag{background:var(--cream);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:.67rem;font-family:monospace;color:var(--muted)}
+.mob-note{background:var(--blue-l);border:1px solid var(--blue-b);border-radius:8px;padding:8px 12px;font-size:.75rem;color:var(--blue);line-height:1.5;margin-top:.65rem}
 
-#statusCard{display:none;background:#fff;border:1px solid var(--border);border-radius:10px;padding:2rem;text-align:center;margin-bottom:1.25rem}
-.ring{width:54px;height:54px;margin:0 auto .9rem;border:2px solid var(--border);border-radius:50%;position:relative}
+/* STATUS */
+#statusCard{display:none;background:#fff;border:1px solid var(--border);border-radius:10px;padding:2rem;text-align:center}
+.ring{width:52px;height:52px;margin:0 auto .85rem;border:2px solid var(--border);border-radius:50%;position:relative}
 .ring::after{content:'';position:absolute;inset:4px;border:2px solid transparent;border-top-color:var(--gold);border-radius:50%;animation:spin .9s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.prog-wrap{background:var(--cream);border-radius:20px;height:5px;margin:.65rem 0 .4rem;overflow:hidden}
+.prog-wrap{background:var(--cream);border-radius:20px;height:5px;margin:.6rem 0 .35rem;overflow:hidden}
 .prog-bar{height:100%;background:linear-gradient(90deg,var(--gold-d),var(--gold));border-radius:20px;width:0%;transition:width .4s}
-#stxt{font-size:.86rem;color:var(--muted)}
+#stxt{font-size:.84rem;color:var(--muted)}
 
-.err{display:none;background:var(--red-l);border:1px solid var(--red-b);border-radius:8px;padding:10px 14px;font-size:.81rem;color:var(--red);margin-bottom:1rem}
+/* ERROR */
+.err{display:none;background:var(--red-l);border:1px solid var(--red-b);border-radius:8px;padding:10px 14px;font-size:.8rem;color:var(--red)}
 
-#resultArea{display:none;animation:fadeUp .4s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+/* RESULT */
+#resultArea{display:none;animation:up .4s ease}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
-/* RESULT CARD */
 #shareCard{
   background:#fff;border:1px solid var(--border);
-  border-radius:12px;overflow:hidden;margin-bottom:1.25rem;
+  border-radius:14px;overflow:hidden;
+  box-shadow:0 4px 24px rgba(26,18,8,.07);
 }
 .rhead{
-  background:var(--ink);padding:1.25rem 1.25rem 1rem;
+  background:var(--ink);
+  padding:2rem 1.5rem 1.75rem;
   text-align:center;
 }
-.rhead .exp-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.5);margin-bottom:.3rem}
-.rhead .exp-amount{font-family:var(--ff-head);font-size:2.8rem;color:var(--gold-l);line-height:1}
+.rhead .rl{font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.45);margin-bottom:.5rem}
+.rhead .ra{font-family:var(--ff-head);font-size:3.5rem;color:var(--gold-l);line-height:1;letter-spacing:-.02em}
+.rhead .rsub{font-size:.75rem;color:rgba(255,255,255,.35);margin-top:.4rem}
 
-.fields{padding:1.1rem 1.25rem}
-.field-row{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:.75rem 0;border-bottom:1px solid var(--cream);
-}
-.field-row:last-child{border-bottom:none}
-.field-left{display:flex;align-items:center;gap:8px}
-.field-icon{
-  width:30px;height:30px;border-radius:7px;
-  background:var(--cream);border:1px solid var(--border);
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.field-icon svg{width:14px;height:14px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.field-label{font-size:.75rem;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.06em}
-.field-value{font-size:.92rem;font-weight:500;color:var(--ink);font-family:var(--ff-mono)}
-.field-value.not-found{color:var(--muted);font-style:italic;font-family:var(--ff-body);font-weight:400;font-size:.82rem}
-
-.preview-strip{
+.receipt-preview{
   display:flex;align-items:center;gap:10px;
-  padding:.75rem 1.25rem;background:var(--cream);
-  border-top:1px solid var(--border);
+  padding:.85rem 1.1rem;background:var(--cream);
+  border-bottom:1px solid var(--border);
 }
-.prev-thumb{
-  width:36px;height:46px;object-fit:cover;
-  border-radius:5px;border:1px solid var(--border);flex-shrink:0;
-}
-.prev-info{flex:1}
-.prev-name{font-size:.75rem;font-family:var(--ff-mono);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.prev-sub{font-size:.7rem;color:var(--muted)}
-.scan-badge{font-size:.68rem;color:var(--muted);text-align:center;padding:.5rem;border-top:1px solid var(--border);font-family:var(--ff-mono)}
+.prev-thumb{width:34px;height:44px;object-fit:cover;border-radius:4px;border:1px solid var(--border);flex-shrink:0}
+.prev-name{font-size:.73rem;font-family:monospace;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prev-sub{font-size:.68rem;color:var(--muted)}
 
-.raw-toggle{display:flex;align-items:center;gap:5px;background:none;border:1px solid var(--border);border-radius:8px;padding:6px 13px;font-size:.76rem;color:var(--muted);cursor:pointer;font-family:var(--ff-body);margin-bottom:.6rem;transition:all .15s}
+.scan-foot{text-align:center;padding:.55rem;font-size:.67rem;color:var(--muted);font-family:monospace;border-top:1px solid var(--border)}
+
+.raw-toggle{display:flex;align-items:center;gap:5px;background:none;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:.74rem;color:var(--muted);cursor:pointer;font-family:var(--ff-body);margin:.9rem 0 .5rem;transition:all .15s}
 .raw-toggle:hover{border-color:var(--gold);color:var(--gold-d)}
 .raw-toggle svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
 .raw-toggle.open svg{transform:rotate(90deg)}
-.rawbox{display:none;background:var(--ink);color:#c8b98a;border-radius:8px;padding:.9rem;font-family:var(--ff-mono);font-size:.72rem;line-height:1.7;overflow-x:auto;white-space:pre-wrap;max-height:180px;overflow-y:auto;margin-bottom:1rem}
+.rawbox{display:none;background:var(--ink);color:#c8b98a;border-radius:8px;padding:.85rem;font-family:monospace;font-size:.71rem;line-height:1.7;overflow-x:auto;white-space:pre-wrap;max-height:160px;overflow-y:auto;margin-bottom:.9rem}
 .rawbox.show{display:block}
 
 .actions{display:flex;gap:8px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:5px;padding:9px 16px;border-radius:8px;font-size:.83rem;font-family:var(--ff-body);cursor:pointer;transition:all .15s;font-weight:500;border:1px solid var(--border);background:#fff;color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:9px 16px;border-radius:8px;font-size:.82rem;font-family:var(--ff-body);cursor:pointer;transition:all .15s;font-weight:500;border:1px solid var(--border);background:#fff;color:var(--ink)}
 .btn:hover{border-color:var(--gold);color:var(--gold-d)}
-.btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.btn-p{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn-p{background:var(--ink);color:#faf7f0;border-color:var(--ink)}
 .btn-p:hover{background:#2d2015}
 
-footer{text-align:center;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);font-size:.74rem;color:var(--muted);line-height:1.8}
+footer{text-align:center;margin-top:2.5rem;font-size:.72rem;color:var(--muted);line-height:1.8}
 </style>
 </head>
 <body>
-<div class="page">
 
-  <header>
-    <div class="logo-row">
-      <div class="logo-box"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
-      <h1>Scan<span>Bill</span></h1>
-    </div>
-    <p class="tagline">Free receipt scanner — extract total, date & GST instantly</p>
-    <div class="free-badge">✦ 100% free — runs on your device</div>
-  </header>
+<div class="logo-row">
+  <div class="logo-box"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+  <h1>Scan<span>Bill</span></h1>
+</div>
+<p class="tagline">Upload a receipt — get the total amount instantly</p>
+
+<div class="wrap">
 
   <div id="uploadSection">
     <button class="camera-btn" onclick="openCamera()">
@@ -138,10 +120,8 @@ footer{text-align:center;margin-top:3rem;padding-top:1.5rem;border-top:1px solid
       Take photo with camera
     </button>
     <input type="file" id="camIn"  accept="image/*" capture="environment" style="display:none" onchange="go(this.files[0])">
-    <input type="file" id="fileIn" accept="image/*" style="display:none"               onchange="go(this.files[0])">
-
+    <input type="file" id="fileIn" accept="image/*" style="display:none" onchange="go(this.files[0])">
     <div class="or-row"><span>or upload from gallery</span></div>
-
     <div class="drop-zone" id="dz"
       onclick="document.getElementById('fileIn').click()"
       ondragover="event.preventDefault();this.classList.add('dg')"
@@ -150,12 +130,9 @@ footer{text-align:center;margin-top:3rem;padding-top:1.5rem;border-top:1px solid
       <div class="upload-icon"><svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg></div>
       <p class="drop-title">Drop your receipt image here</p>
       <p class="drop-sub">or click to browse from your gallery</p>
-      <div class="fmt-row">
-        <span class="fmt-tag">JPG</span><span class="fmt-tag">PNG</span>
-        <span class="fmt-tag">WEBP</span><span class="fmt-tag">HEIC</span>
-      </div>
+      <div class="fmt-row"><span class="fmt-tag">JPG</span><span class="fmt-tag">PNG</span><span class="fmt-tag">WEBP</span><span class="fmt-tag">HEIC</span></div>
     </div>
-    <div class="mob-note">📱 <strong>On phone:</strong> Camera button opens rear camera. Box above picks from gallery.</div>
+    <div class="mob-note">📱 <strong>On phone:</strong> Camera button opens rear camera directly.</div>
   </div>
 
   <div id="statusCard">
@@ -169,49 +146,18 @@ footer{text-align:center;margin-top:3rem;padding-top:1.5rem;border-top:1px solid
   <div id="resultArea">
     <div id="shareCard">
       <div class="rhead">
-        <div class="exp-label">Expense Amount</div>
-        <div class="exp-amount" id="expAmt">—</div>
+        <div class="rl">Total Expense Amount</div>
+        <div class="ra" id="totalDisplay">—</div>
+        <div class="rsub" id="filenameDisplay">receipt.jpg</div>
       </div>
-
-      <div class="fields">
-        <div class="field-row">
-          <div class="field-left">
-            <div class="field-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-            <span class="field-label">Date</span>
-          </div>
-          <span class="field-value" id="fDate">—</span>
-        </div>
-        <div class="field-row">
-          <div class="field-left">
-            <div class="field-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div>
-            <span class="field-label">GST Number</span>
-          </div>
-          <span class="field-value" id="fGST">—</span>
-        </div>
-        <div class="field-row">
-          <div class="field-left">
-            <div class="field-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
-            <span class="field-label">Tax / GST Amount</span>
-          </div>
-          <span class="field-value" id="fTax">—</span>
-        </div>
-        <div class="field-row">
-          <div class="field-left">
-            <div class="field-icon"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
-            <span class="field-label">Total Amount</span>
-          </div>
-          <span class="field-value" id="fTotal" style="color:var(--green);font-size:1.1rem">—</span>
-        </div>
-      </div>
-
-      <div class="preview-strip">
+      <div class="receipt-preview">
         <img class="prev-thumb" id="prevImg" alt="receipt">
-        <div class="prev-info">
+        <div>
           <div class="prev-name" id="prevName">receipt.jpg</div>
           <div class="prev-sub">Scanned just now</div>
         </div>
       </div>
-      <div class="scan-badge">Scanned with ScanBill • Free Receipt Scanner</div>
+      <div class="scan-foot">Scanned with ScanBill • Free Receipt Scanner</div>
     </div>
 
     <button class="raw-toggle" id="rt" onclick="toggleRaw()">
@@ -227,16 +173,16 @@ footer{text-align:center;margin-top:3rem;padding-top:1.5rem;border-top:1px solid
       </button>
       <button class="btn btn-p" id="shareBtn" onclick="shareImg()">
         <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        Share as image
+        Share
       </button>
       <button class="btn" onclick="copyTxt()">
         <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-        Copy text
+        Copy
       </button>
     </div>
   </div>
 
-  <footer><strong>ScanBill</strong> — Free Receipt Scanner<br>OCR runs on your device · No data sent anywhere · Always free</footer>
+  <footer>ScanBill · Free · No API · Runs on your device</footer>
 </div>
 
 <script>
@@ -250,14 +196,13 @@ footer{text-align:center;margin-top:3rem;padding-top:1.5rem;border-top:1px solid
     document.head.appendChild(t2);
   };
   document.head.appendChild(t);
-
   var h=document.createElement('script');
   h.src='https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
   document.head.appendChild(h);
 })();
 
-var lastResult=null;
-var previewURL=null;
+var lastTotal=null;
+var lastRaw='';
 
 function openCamera(){
   var mob=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -279,44 +224,36 @@ function go(file){
   show('statusCard',true);
   setP(5,'Starting…');
 
-  // Set preview image
-  if(previewURL) URL.revokeObjectURL(previewURL);
-  previewURL=URL.createObjectURL(file);
-  document.getElementById('prevImg').src=previewURL;
+  // Preview
+  document.getElementById('prevImg').src=URL.createObjectURL(file);
   document.getElementById('prevName').textContent=file.name;
+  document.getElementById('filenameDisplay').textContent=file.name;
 
-  // Wait for Tesseract to load
   var tries=0;
   function wait(){
-    if(typeof Tesseract!=='undefined'){
-      runOCR(file);
-    } else if(tries++<40){
-      setTimeout(wait,300);
-    } else {
-      showErr('OCR library failed to load. Check your internet and refresh the page.');
-      show('statusCard',false); show('uploadSection',true);
-    }
+    if(typeof Tesseract!=='undefined') runOCR(file);
+    else if(tries++<40) setTimeout(wait,300);
+    else{ showErr('OCR library failed to load. Check internet and refresh.'); show('statusCard',false); show('uploadSection',true); }
   }
   wait();
 }
 
 function runOCR(file){
-  preprocessImage(file,function(processed){
-    setP(40,'Reading receipt…');
-    Tesseract.recognize(processed,'eng',{
+  // Scale up only — no harsh filtering
+  scaleUp(file, function(scaled){
+    setP(35,'Reading receipt…');
+    Tesseract.recognize(scaled,'eng',{
       logger:function(m){
-        if(m.status==='recognizing text')
-          setP(Math.round(40+m.progress*52),'Reading receipt text…');
+        if(m.status==='recognizing text') setP(Math.round(35+m.progress*55),'Reading text…');
       }
     }).then(function(res){
-      setP(98,'Extracting data…');
-      setTimeout(function(){
-        var text=res.data.text;
-        var parsed=extract(text);
-        lastResult=Object.assign({},parsed,{raw:text});
-        show('statusCard',false);
-        render(parsed);
-      },300);
+      setP(99,'Finding total…');
+      var text=res.data.text;
+      lastRaw=text;
+      var total=findTotal(text);
+      lastTotal=total;
+      show('statusCard',false);
+      showResult(total);
     }).catch(function(e){
       showErr('OCR error: '+e.message);
       show('statusCard',false); show('uploadSection',true);
@@ -324,192 +261,128 @@ function runOCR(file){
   });
 }
 
-function preprocessImage(file,cb){
+function scaleUp(file,cb){
   var img=new Image();
   img.onload=function(){
     var c=document.createElement('canvas');
-    var scale=Math.min(3,Math.max(1.5,1800/Math.max(img.width,img.height)));
+    var scale=Math.min(2.5,Math.max(1,1500/Math.max(img.width,img.height)));
     c.width=img.width*scale; c.height=img.height*scale;
     var ctx=c.getContext('2d');
     ctx.drawImage(img,0,0,c.width,c.height);
-    var d=ctx.getImageData(0,0,c.width,c.height),px=d.data;
-    for(var i=0;i<px.length;i+=4){
-      var g=0.299*px[i]+0.587*px[i+1]+0.114*px[i+2];
-      g=Math.min(255,Math.max(0,1.6*(g-128)+128));
-      px[i]=px[i+1]=px[i+2]=(g>130?255:0);
-    }
-    ctx.putImageData(d,0,0);
-    c.toBlob(function(b){ cb(new File([b],'p.png',{type:'image/png'})); },'image/png');
+    c.toBlob(function(b){cb(new File([b],'s.png',{type:'image/png'}));
+    },'image/png');
   };
   img.onerror=function(){cb(file);};
   img.src=URL.createObjectURL(file);
 }
 
-function setP(pct,txt){
-  document.getElementById('pb').style.width=pct+'%';
-  document.getElementById('stxt').textContent=txt;
-}
-
-// ── EXTRACT ONLY RELIABLE FIELDS ─────────────────────────────
-function extract(text){
-  var r={sym:'₹', date:null, gst:null, tax:null, total:null};
-
-  // Currency
-  if(/\$/.test(text)) r.sym='$';
-  else if(/£/.test(text)) r.sym='£';
-  else if(/€/.test(text)) r.sym='€';
-
-  // DATE — very reliable
-  var dm=text.match(/\b(\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4})\b/);
-  if(dm) r.date=dm[1];
-
-  // GST number — very reliable (fixed format)
-  var gm=text.match(/\b\d{2}[A-Z]{5}\d{4}[A-Z]\d[Z][A-Z\d]\b/);
-  if(gm) r.gst=gm[0];
-
-  // TAX amount — scan for tax/gst lines
-  var taxLines=text.match(/.*(tax|gst|cgst|sgst|igst|vat).*/gi)||[];
-  for(var i=0;i<taxLines.length;i++){
-    var ns=taxLines[i].match(/\d[\d,]*(?:\.\d{1,2})?/g);
-    if(ns){
-      var v=parseFloat(ns[ns.length-1].replace(/,/g,''));
-      if(v>0&&v<10000){r.tax=v;break;}
-    }
-  }
-
-  // TOTAL — most reliable: scan bottom-up for total keywords
+// ── FIND TOTAL ────────────────────────────────────────────────
+function findTotal(text){
   var lines=text.split('\n').map(function(l){return l.trim();}).filter(Boolean);
-  var tkw=/grand\s*total|total\s*amount|net\s*total|amount\s*due|bill\s*total|^total\b/i;
-  for(var i=lines.length-1;i>=0;i--){
-    if(tkw.test(lines[i])){
-      var nums=lines[i].match(/\d[\d,]*(?:\.\d{1,2})?/g);
-      if(nums){
-        var vals=nums.map(function(n){return parseFloat(n.replace(/,/g,''));});
-        r.total=Math.max.apply(null,vals);
-        break;
-      }
-      // check next line
-      if(i+1<lines.length){
-        var nm=lines[i+1].match(/\d[\d,]*(?:\.\d{1,2})?/g);
-        if(nm){r.total=parseFloat(nm[0].replace(/,/g,''));break;}
+  var sym='₹';
+  if(/\$/.test(text)) sym='$';
+  else if(/£/.test(text)) sym='£';
+  else if(/€/.test(text)) sym='€';
+
+  // Keywords that mean "total" — most to least specific
+  var keywords=[
+    /grand\s*total/i,
+    /total\s*amount/i,
+    /net\s*total/i,
+    /amount\s*due/i,
+    /bill\s*total/i,
+    /payable/i,
+    /^total$/i,
+    /total/i
+  ];
+
+  // Scan bottom-up for each keyword
+  for(var k=0;k<keywords.length;k++){
+    for(var i=lines.length-1;i>=0;i--){
+      if(keywords[k].test(lines[i])){
+        // Get all numbers on this line
+        var nums=lines[i].match(/\d[\d,]*(?:\.\d{1,2})?/g);
+        if(nums&&nums.length){
+          var vals=nums.map(function(n){return parseFloat(n.replace(/,/g,''));});
+          var biggest=Math.max.apply(null,vals);
+          if(biggest>0) return {amount:biggest, sym:sym};
+        }
+        // Check next line for the number
+        if(i+1<lines.length){
+          var nn=lines[i+1].match(/^\s*[\₹\$\£\€]?\s*(\d[\d,]*(?:\.\d{1,2})?)\s*$/);
+          if(nn) return {amount:parseFloat(nn[1].replace(/,/g,'')), sym:sym};
+        }
       }
     }
   }
 
-  // Fallback: largest number on receipt
-  if(!r.total){
-    var all=[];
-    (text.match(/\d[\d,]*(?:\.\d{1,2})?/g)||[]).forEach(function(n){
-      var v=parseFloat(n.replace(/,/g,''));
-      if(v>0&&v<1000000) all.push(v);
-    });
-    if(all.length) r.total=Math.max.apply(null,all);
-  }
-
-  return r;
+  // Last resort: largest number on entire receipt
+  var all=[];
+  (text.match(/\d[\d,]*(?:\.\d{1,2})?/g)||[]).forEach(function(n){
+    var v=parseFloat(n.replace(/,/g,''));
+    if(v>=1&&v<100000) all.push(v);
+  });
+  if(all.length) return {amount:Math.max.apply(null,all), sym:sym};
+  return null;
 }
 
-// ── RENDER ────────────────────────────────────────────────────
-function fmt(n,s){
-  if(n==null||isNaN(n)) return null;
-  return (s||'₹')+Number(n).toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:2});
-}
-
-function setField(id,val){
-  var el=document.getElementById(id);
-  if(val){
-    el.textContent=val;
-    el.className='field-value';
+// ── SHOW RESULT ───────────────────────────────────────────────
+function showResult(total){
+  if(total){
+    document.getElementById('totalDisplay').textContent=total.sym+total.amount.toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:2});
   } else {
-    el.textContent='Not found on receipt';
-    el.className='field-value not-found';
+    document.getElementById('totalDisplay').textContent='Not found';
   }
-}
-
-function render(d){
-  var s=d.sym||'₹';
-  var totalFmt=fmt(d.total,s);
-  document.getElementById('expAmt').textContent=totalFmt||'—';
-  setField('fDate', d.date);
-  setField('fGST',  d.gst);
-  setField('fTax',  fmt(d.tax,s));
-  setField('fTotal',totalFmt);
-  document.getElementById('rawbox').textContent=lastResult?lastResult.raw:'';
+  document.getElementById('rawbox').textContent=lastRaw;
   show('resultArea',true);
   document.getElementById('resultArea').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-// ── SHARE AS IMAGE ────────────────────────────────────────────
+// ── SHARE ─────────────────────────────────────────────────────
 function shareImg(){
   var btn=document.getElementById('shareBtn');
   var orig=btn.innerHTML;
-  btn.textContent='⏳ Preparing…'; btn.disabled=true;
-
+  btn.textContent='⏳…'; btn.disabled=true;
   if(typeof html2canvas==='undefined'){
     btn.innerHTML=orig; btn.disabled=false;
-    alert('Share library still loading, please try again in a moment.');
+    alert('Share library loading, try again in a moment.');
     return;
   }
-
-  html2canvas(document.getElementById('shareCard'),{
-    backgroundColor:'#ffffff',scale:2,useCORS:true
-  }).then(function(canvas){
+  html2canvas(document.getElementById('shareCard'),{backgroundColor:'#ffffff',scale:2}).then(function(canvas){
     canvas.toBlob(function(blob){
       var file=new File([blob],'scanbill.png',{type:'image/png'});
       if(navigator.canShare&&navigator.canShare({files:[file]})){
-        navigator.share({title:'Receipt Scan',files:[file]}).catch(function(){});
+        navigator.share({title:'Receipt Total',files:[file]}).catch(function(){});
       } else {
         var url=URL.createObjectURL(blob);
         var a=document.createElement('a');
-        a.href=url; a.download='scanbill-receipt.png'; a.click();
+        a.href=url; a.download='scanbill.png'; a.click();
         URL.revokeObjectURL(url);
       }
       btn.innerHTML=orig; btn.disabled=false;
     },'image/png');
-  }).catch(function(e){
-    btn.innerHTML=orig; btn.disabled=false;
-    alert('Could not create image: '+e.message);
-  });
+  }).catch(function(e){ btn.innerHTML=orig; btn.disabled=false; });
 }
 
 // ── HELPERS ───────────────────────────────────────────────────
-function show(id,v){document.getElementById(id).style.display=v?'block':'none';}
-function showErr(m){var e=document.getElementById('errBox');e.textContent='⚠ '+m;e.style.display='block';}
-
+function setP(p,t){ document.getElementById('pb').style.width=p+'%'; document.getElementById('stxt').textContent=t; }
+function show(id,v){ document.getElementById(id).style.display=v?'block':'none'; }
+function showErr(m){ var e=document.getElementById('errBox'); e.textContent='⚠ '+m; e.style.display='block'; }
+function toggleRaw(){ document.getElementById('rawbox').classList.toggle('show'); document.getElementById('rt').classList.toggle('open'); }
+function copyTxt(){
+  var t=lastTotal?'Total Amount: '+lastTotal.sym+lastTotal.amount:'Total not found';
+  navigator.clipboard.writeText(t).then(function(){
+    var b=document.querySelector('.btn:last-child'),o=b.innerHTML;
+    b.textContent='✓ Copied!'; setTimeout(function(){b.innerHTML=o;},1800);
+  });
+}
 function resetApp(){
-  lastResult=null;
+  lastTotal=null; lastRaw='';
   show('resultArea',false); show('errBox',false); show('uploadSection',true);
-  document.getElementById('fileIn').value='';
-  document.getElementById('camIn').value='';
+  document.getElementById('fileIn').value=''; document.getElementById('camIn').value='';
   document.getElementById('rawbox').classList.remove('show');
   document.getElementById('rt').classList.remove('open');
   window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function toggleRaw(){
-  document.getElementById('rawbox').classList.toggle('show');
-  document.getElementById('rt').classList.toggle('open');
-}
-
-function copyTxt(){
-  if(!lastResult) return;
-  var d=lastResult, s=d.sym||'₹';
-  var t=[
-    '🧾 Receipt Summary',
-    '━━━━━━━━━━━━━━━━━━',
-    '📅 Date        : '+(d.date||'Not found'),
-    '🧾 GST Number  : '+(d.gst||'Not found'),
-    '💲 Tax Amount  : '+(d.tax?((s||'₹')+d.tax):'Not found'),
-    '💰 Total       : '+(d.total?((s||'₹')+d.total):'Not found'),
-    '━━━━━━━━━━━━━━━━━━',
-    'Scanned with ScanBill'
-  ].join('\n');
-
-  navigator.clipboard.writeText(t).then(function(){
-    var b=document.querySelector('.btn:last-child'),o=b.innerHTML;
-    b.textContent='✓ Copied!';
-    setTimeout(function(){b.innerHTML=o;},1800);
-  });
 }
 </script>
 </body>
