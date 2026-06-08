@@ -29,7 +29,7 @@ h1 span{color:var(--gold)}
 .wrap{width:100%;max-width:420px}
 
 /* UPLOAD */
-.camera-btn{width:100%;padding:13px;background:var(--ink);color:#faf7f0;border:none;border-radius:10px;font-size:.92rem;font-family:var(--ff-body);font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:.65rem;transition:background .15s}
+.camera-btn{width:100%;padding:13px;background:var(--ink);color:#faf7f0;border:none;border-radius:10px;font-size:.92rem;font-family:var(--ff-body);font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:.65rem;transition:background .15s;text-decoration:none;-webkit-tap-highlight-color:transparent;user-select:none}
 .camera-btn:hover{background:#2d2015}
 .camera-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .or-row{text-align:center;font-size:.75rem;color:var(--muted);margin-bottom:.65rem;position:relative}
@@ -115,10 +115,11 @@ footer{text-align:center;margin-top:2.5rem;font-size:.72rem;color:var(--muted);l
 <div class="wrap">
 
   <div id="uploadSection">
-    <button class="camera-btn" onclick="openCamera()">
+    <!-- Camera button — label trick works on ALL phones -->
+    <label for="camIn" class="camera-btn">
       <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
       Take photo with camera
-    </button>
+    </label>
     <input type="file" id="camIn"  accept="image/*" capture="environment" style="display:none" onchange="go(this.files[0])">
     <input type="file" id="fileIn" accept="image/*" style="display:none" onchange="go(this.files[0])">
     <div class="or-row"><span>or upload from gallery</span></div>
@@ -203,11 +204,6 @@ footer{text-align:center;margin-top:2.5rem;font-size:.72rem;color:var(--muted);l
 
 var lastTotal=null;
 var lastRaw='';
-
-function openCamera(){
-  var mob=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  document.getElementById(mob?'camIn':'fileIn').click();
-}
 
 function onDrop(e){
   e.preventDefault();
