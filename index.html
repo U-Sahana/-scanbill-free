@@ -247,7 +247,10 @@ function runOCR(file){
     Tesseract.recognize(scaled,'eng',{
       logger:function(m){
         if(m.status==='recognizing text') setP(Math.round(35+m.progress*55),'Reading text…');
-      }
+      },
+      tessedit_pageseg_mode:'6',
+      tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,/-:₹$ #@&()',
+      preserve_interword_spaces:'1',
     }).then(function(res){
       setP(99,'Finding total…');
       var text=res.data.text;
@@ -266,12 +269,33 @@ function runOCR(file){
 function scaleUp(file,cb){
   var img=new Image();
   img.onload=function(){
-    var c=document.createElement('canvas');
-    var scale=Math.min(2.5,Math.max(1,1500/Math.max(img.width,img.height)));
-    c.width=img.width*scale; c.height=img.height*scale;
-    var ctx=c.getContext('2d');
-    ctx.drawImage(img,0,0,c.width,c.height);
-    c.toBlob(function(b){cb(new File([b],'s.png',{type:'image/png'}));
+    var canvas=document.createElement('canvas');
+    // Scale up significantly for better OCR
+    var scale=Math.min(4,Math.max(2,2400/Math.max(img.width,img.height)));
+    canvas.width=img.width*scale;
+    canvas.height=img.height*scale;
+    var ctx=canvas.getContext('2d');
+
+    // Step 1: Draw scaled image
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+
+    // Step 2: Get pixel data and enhance
+    var d=ctx.getImageData(0,0,canvas.width,canvas.height);
+    var px=d.data;
+
+    for(var i=0;i<px.length;i+=4){
+      // Convert to greyscale
+      var g=0.299*px[i]+0.587*px[i+1]+0.114*px[i+2];
+      // Boost contrast
+      g=Math.min(255,Math.max(0,((g/255-0.5)*1.8+0.5)*255));
+      // Sharpen — make dark pixels darker, light pixels lighter
+      var v=g>140?255:g<100?0:g;
+      px[i]=px[i+1]=px[i+2]=v;
+    }
+    ctx.putImageData(d,0,0);
+
+    canvas.toBlob(function(b){
+      cb(new File([b],'s.png',{type:'image/png'}));
     },'image/png');
   };
   img.onerror=function(){cb(file);};
@@ -280,80 +304,77 @@ function scaleUp(file,cb){
 
 // ── FIND TOTAL ────────────────────────────────────────────────
 function findTotal(text){
-  var lines=text.split('\n').map(function(l){return l.trim();}).filter(Boolean);
   var sym='₹';
-
+  var lines=text.split('\n').map(function(l){return l.trim();}).filter(Boolean);
   function parseNum(s){return parseFloat(String(s).replace(/,/g,''));}
-  function getNums(line){
-    var ns=line.match(/\d[\d,]*(?:\.\d{1,2})?/g)||[];
-    return ns.map(parseNum).filter(function(n){return n>0&&n<1000000;});
-  }
-  function make(n){return {amount:n,sym:sym};}
-  function biggest(nums){return Math.max.apply(null,nums);}
 
-  // All keywords to look for — in priority order
-  var patterns=[
-    /grand\s*total/i,       // Grand Total
-    /total\s*amount/i,      // Total Amount
-    /net\s*total/i,         // Net Total
-    /amount\s*due/i,        // Amount Due
-    /bill\s*total/i,        // Bill Total
-    /total\s*bill/i,        // Total Bill
-    /payable/i,             // Payable
-    /\btotal\b/i,           // Total
-    /\/-/,                  // /-  (common in Indian receipts like 59/-)
-    /\brs\.?\s*\d/i,        // Rs 59 or Rs. 59
-    /\bRS\.?\s*\d/,         // RS 59
-    /₹\s*\d/,              // ₹ 59
+  // STEP 1: Look for number right next to these keywords (bottom-up)
+  var searches=[
+    /grand\s*total[\s:₹Rs]*(\d[\d,]*(?:\.\d{1,2})?)/i,
+    /total\s*amount[\s:₹Rs]*(\d[\d,]*(?:\.\d{1,2})?)/i,
+    /net\s*total[\s:₹Rs]*(\d[\d,]*(?:\.\d{1,2})?)/i,
+    /amount\s*due[\s:₹Rs]*(\d[\d,]*(?:\.\d{1,2})?)/i,
+    /\btotal\b[\s:₹Rs]*(\d[\d,]*(?:\.\d{1,2})?)/i,
+    /(\d[\d,]*(?:\.\d{1,2})?)\s*\/[-–]/,
+    /₹\s*(\d[\d,]*(?:\.\d{1,2})?)/,
+    /\bRs\.?\s*(\d[\d,]*(?:\.\d{1,2})?)/i,
   ];
-
-  // Scan bottom-up for each pattern
-  for(var k=0;k<patterns.length;k++){
+  for(var k=0;k<searches.length;k++){
     for(var i=lines.length-1;i>=0;i--){
-      if(patterns[k].test(lines[i])){
-        var nums=getNums(lines[i]);
-        if(nums.length){return make(biggest(nums));}
-        // check next line
-        if(i+1<lines.length){
-          var nn=getNums(lines[i+1]);
-          if(nn.length) return make(biggest(nn));
+      var m=lines[i].match(searches[k]);
+      if(m){var v=parseNum(m[1]);if(v>0)return{amount:v,sym:sym};}
+    }
+    // keyword on one line, number on next
+    if(k<=4){
+      for(var i=lines.length-2;i>=0;i--){
+        if(searches[k].test(lines[i])){
+          var nn=lines[i+1].match(/(\d[\d,]*(?:\.\d{1,2})?)/);
+          if(nn){var v=parseNum(nn[1]);if(v>0)return{amount:v,sym:sym};}
         }
       }
     }
   }
 
-  // Handle "59/-" format specifically (Indian style)
-  var slashMatch=text.match(/(\d[\d,]*(?:\.\d{1,2})?)\s*\/[-–]/);
-  if(slashMatch) return make(parseNum(slashMatch[1]));
-
-  // Amount after dashed separator line (GREEN HOUSE style)
-  for(var i=0;i<lines.length;i++){
-    if(/^[-–—=.]{3,}$/.test(lines[i].replace(/\s/g,''))){
-      for(var j=i+1;j<Math.min(i+3,lines.length);j++){
-        var next=lines[j];
-        if(!/[a-zA-Z]{4,}/.test(next)){
-          var nums=getNums(next);
-          if(nums.length>=1&&nums.length<=2) return make(biggest(nums));
-        }
-      }
-    }
-  }
-
-  // Lines with only one number (not item lines)
-  var singles=[];
+  // STEP 2: Calculate from weight-based items (wt × price = amount)
+  // Format: "0.400 46.00 18.40" or "ITEM 0.400 46.00 18.40"
+  var total=0;
+  var found=0;
   lines.forEach(function(l){
-    var ns=getNums(l);
-    if(ns.length===1&&ns[0]>=1) singles.push(ns[0]);
+    if(/total|grand|payable|tax|gst|name|wt\/qty|mob|operator|bill|mc#|no\s*of|t\s*qty|t\s*wt|ary|ipes/i.test(l)) return;
+    if(/^[-–—=.\s]{2,}$/.test(l)) return;
+    // Extract all numbers from line
+    var ns=(l.match(/\d+(?:\.\d+)?/g)||[]).map(parseNum).filter(function(n){return n>0;});
+    // Weight-based line: 3+ numbers where first two multiply to give last
+    if(ns.length>=3){
+      for(var i=0;i<ns.length-2;i++){
+        var wt=ns[i], price=ns[i+1], amt=ns[i+2];
+        var calc=Math.round(wt*price*100)/100;
+        if(Math.abs(calc-amt)<=calc*0.05+0.5&&wt<10&&price>1){
+          total+=amt; found++; return;
+        }
+      }
+    }
+    // Simple: item name + single price
+    if(ns.length===1&&/[a-zA-Z]{2,}/.test(l)&&ns[0]>0&&ns[0]<10000){
+      total+=ns[0]; found++; return;
+    }
+    // "ITEM qty price" like "CORIANDER 1 10.00 10.00"
+    if(ns.length>=2){
+      var qty=ns[ns.length-2], amt=ns[ns.length-1];
+      if(Number.isInteger(qty)&&qty<=100&&amt>0&&/[a-zA-Z]{2,}/.test(l)){
+        total+=amt; found++; return;
+      }
+    }
   });
-  if(singles.length) return make(biggest(singles));
 
-  // Absolute fallback: largest number
+  if(found>=2) return{amount:Math.round(total*100)/100,sym:sym};
+
+  // STEP 3: Fallback — largest single number
   var all=[];
   (text.match(/\d[\d,]*(?:\.\d{1,2})?/g)||[]).forEach(function(n){
-    var v=parseNum(n);
-    if(v>=1&&v<1000000) all.push(v);
+    var v=parseNum(n);if(v>=1&&v<100000)all.push(v);
   });
-  if(all.length) return make(biggest(all));
+  if(all.length)return{amount:Math.max.apply(null,all),sym:sym};
   return null;
 }
 
