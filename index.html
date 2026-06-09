@@ -116,15 +116,16 @@ footer{text-align:center;margin-top:2.5rem;font-size:.72rem;color:var(--muted);l
 
   <div id="uploadSection">
 
-    <!-- CAMERA BUTTON: capture=environment forces camera on Android Chrome -->
+    <!-- CAMERA BUTTON: most compatible approach for Android Chrome -->
     <div style="position:relative;width:100%;margin-bottom:.65rem;">
       <div class="camera-btn">
         <svg viewBox="0 0 24 24" style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
         📷 Open Camera
       </div>
-      <input type="file" accept="image/*" capture="environment"
+      <input type="file" accept="image/*" capture="user"
         onchange="go(this.files[0])"
-        style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:10;font-size:16px;">
+        style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:10;font-size:16px;"
+        id="camBtn">
     </div>
 
     <!-- GALLERY BUTTON -->
@@ -280,10 +281,13 @@ function scaleUp(file,cb){
 // ── FIND TOTAL ────────────────────────────────────────────────
 function findTotal(text){
   var lines=text.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+  // Currency — default ₹, only change if clearly another currency
   var sym='₹';
-  if(/\$/.test(text)) sym='$';
-  else if(/£/.test(text)) sym='£';
-  else if(/€/.test(text)) sym='€';
+  if(/\$\s*\d/.test(text)) sym='$';
+  else if(/£\s*\d/.test(text)) sym='£';
+  else if(/€\s*\d/.test(text)) sym='€';
+  // If OCR misread ₹ as something else, force ₹ for Indian receipts
+  if(/rs\.?\s*\d|rupee|inr|\binr\b/i.test(text)) sym='₹';
 
   // Keywords that mean "total" — most to least specific
   var keywords=[
