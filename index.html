@@ -281,53 +281,79 @@ function scaleUp(file,cb){
 // ── FIND TOTAL ────────────────────────────────────────────────
 function findTotal(text){
   var lines=text.split('\n').map(function(l){return l.trim();}).filter(Boolean);
-  // Currency — default ₹, only change if clearly another currency
   var sym='₹';
-  if(/\$\s*\d/.test(text)) sym='$';
-  else if(/£\s*\d/.test(text)) sym='£';
-  else if(/€\s*\d/.test(text)) sym='€';
-  // If OCR misread ₹ as something else, force ₹ for Indian receipts
-  if(/rs\.?\s*\d|rupee|inr|\binr\b/i.test(text)) sym='₹';
 
-  // Keywords that mean "total" — most to least specific
-  var keywords=[
-    /grand\s*total/i,
-    /total\s*amount/i,
-    /net\s*total/i,
-    /amount\s*due/i,
-    /bill\s*total/i,
-    /payable/i,
-    /^total$/i,
-    /total/i
+  function parseNum(s){return parseFloat(String(s).replace(/,/g,''));}
+  function getNums(line){
+    var ns=line.match(/\d[\d,]*(?:\.\d{1,2})?/g)||[];
+    return ns.map(parseNum).filter(function(n){return n>0&&n<1000000;});
+  }
+  function make(n){return {amount:n,sym:sym};}
+  function biggest(nums){return Math.max.apply(null,nums);}
+
+  // All keywords to look for — in priority order
+  var patterns=[
+    /grand\s*total/i,       // Grand Total
+    /total\s*amount/i,      // Total Amount
+    /net\s*total/i,         // Net Total
+    /amount\s*due/i,        // Amount Due
+    /bill\s*total/i,        // Bill Total
+    /total\s*bill/i,        // Total Bill
+    /payable/i,             // Payable
+    /\btotal\b/i,           // Total
+    /\/-/,                  // /-  (common in Indian receipts like 59/-)
+    /\brs\.?\s*\d/i,        // Rs 59 or Rs. 59
+    /\bRS\.?\s*\d/,         // RS 59
+    /₹\s*\d/,              // ₹ 59
   ];
 
-  // Scan bottom-up for each keyword
-  for(var k=0;k<keywords.length;k++){
+  // Scan bottom-up for each pattern
+  for(var k=0;k<patterns.length;k++){
     for(var i=lines.length-1;i>=0;i--){
-      if(keywords[k].test(lines[i])){
-        // Get all numbers on this line
-        var nums=lines[i].match(/\d[\d,]*(?:\.\d{1,2})?/g);
-        if(nums&&nums.length){
-          var vals=nums.map(function(n){return parseFloat(n.replace(/,/g,''));});
-          var biggest=Math.max.apply(null,vals);
-          if(biggest>0) return {amount:biggest, sym:sym};
-        }
-        // Check next line for the number
+      if(patterns[k].test(lines[i])){
+        var nums=getNums(lines[i]);
+        if(nums.length){return make(biggest(nums));}
+        // check next line
         if(i+1<lines.length){
-          var nn=lines[i+1].match(/^\s*[\₹\$\£\€]?\s*(\d[\d,]*(?:\.\d{1,2})?)\s*$/);
-          if(nn) return {amount:parseFloat(nn[1].replace(/,/g,'')), sym:sym};
+          var nn=getNums(lines[i+1]);
+          if(nn.length) return make(biggest(nn));
         }
       }
     }
   }
 
-  // Last resort: largest number on entire receipt
+  // Handle "59/-" format specifically (Indian style)
+  var slashMatch=text.match(/(\d[\d,]*(?:\.\d{1,2})?)\s*\/[-–]/);
+  if(slashMatch) return make(parseNum(slashMatch[1]));
+
+  // Amount after dashed separator line (GREEN HOUSE style)
+  for(var i=0;i<lines.length;i++){
+    if(/^[-–—=.]{3,}$/.test(lines[i].replace(/\s/g,''))){
+      for(var j=i+1;j<Math.min(i+3,lines.length);j++){
+        var next=lines[j];
+        if(!/[a-zA-Z]{4,}/.test(next)){
+          var nums=getNums(next);
+          if(nums.length>=1&&nums.length<=2) return make(biggest(nums));
+        }
+      }
+    }
+  }
+
+  // Lines with only one number (not item lines)
+  var singles=[];
+  lines.forEach(function(l){
+    var ns=getNums(l);
+    if(ns.length===1&&ns[0]>=1) singles.push(ns[0]);
+  });
+  if(singles.length) return make(biggest(singles));
+
+  // Absolute fallback: largest number
   var all=[];
   (text.match(/\d[\d,]*(?:\.\d{1,2})?/g)||[]).forEach(function(n){
-    var v=parseFloat(n.replace(/,/g,''));
-    if(v>=1&&v<100000) all.push(v);
+    var v=parseNum(n);
+    if(v>=1&&v<1000000) all.push(v);
   });
-  if(all.length) return {amount:Math.max.apply(null,all), sym:sym};
+  if(all.length) return make(biggest(all));
   return null;
 }
 
