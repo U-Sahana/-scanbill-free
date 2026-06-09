@@ -115,25 +115,30 @@ footer{text-align:center;margin-top:2.5rem;font-size:.72rem;color:var(--muted);l
 <div class="wrap">
 
   <div id="uploadSection">
+
+    <!-- CAMERA BUTTON: capture=environment forces camera on Android Chrome -->
     <div style="position:relative;width:100%;margin-bottom:.65rem;">
       <div class="camera-btn">
         <svg viewBox="0 0 24 24" style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        Take photo / Upload receipt
+        📷 Open Camera
+      </div>
+      <input type="file" accept="image/*" capture="environment"
+        onchange="go(this.files[0])"
+        style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:10;font-size:16px;">
+    </div>
+
+    <!-- GALLERY BUTTON -->
+    <div style="position:relative;width:100%;margin-bottom:.65rem;">
+      <div class="camera-btn" style="background:var(--cream);color:var(--ink);border:1.5px solid var(--border);">
+        <svg viewBox="0 0 24 24" style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        🖼 Upload from Gallery
       </div>
       <input type="file" accept="image/*"
         onchange="go(this.files[0])"
         style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:10;font-size:16px;">
     </div>
-    <div class="or-row"><span>or choose from gallery</span></div>
-    <div class="drop-zone" id="dz" style="position:relative;">
-      <div class="upload-icon"><svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg></div>
-      <p class="drop-title">Upload from gallery</p>
-      <p class="drop-sub">tap here to browse your photos</p>
-      <div class="fmt-row"><span class="fmt-tag">JPG</span><span class="fmt-tag">PNG</span><span class="fmt-tag">WEBP</span></div>
-      <input type="file" accept="image/*" onchange="go(this.files[0])"
-        style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:10;font-size:16px;">
-    </div>
-    <div class="mob-note">📱 Tap the black button to take a photo, or tap the box above to pick from gallery.</div>
+
+    <div class="mob-note">📱 <strong>Camera button</strong> opens your phone camera directly to click a photo. <strong>Gallery button</strong> lets you pick an existing photo.</div>
   </div>
 
   <div id="statusCard">
